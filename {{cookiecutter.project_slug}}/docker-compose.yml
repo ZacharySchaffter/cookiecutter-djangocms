@@ -1,0 +1,33 @@
+version: "2"
+services:
+  django:
+    image: python:3
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usr/app
+    stdin_open: true
+    working_dir: /usr/app/django
+    tty: true
+    command: "/bin/bash"
+    links:
+      - postgres:postgres
+    environment:
+      DJANGO_SETTINGS_MODULE: app.config.settings.local
+      PYTHONPATH: /usr/app/django/project:/usr/app/django/project/vendor
+      PIPENV_VENV_IN_PROJECT: 1
+      DEBUG: "true"
+    logging:
+      driver: none
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    volumes:
+      - /usr/lib/postgresql
+      - .:/usr/app/django
+    environment:
+     POSTGRES_USER: djangodb
+     POSTGRES_PASSWORD: djangodb
+    logging:
+      driver: none
