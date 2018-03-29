@@ -1,0 +1,88 @@
+// ------------------------------------
+// MIXINS
+// ------------------------------------
+// Uses:
+//  breakpoint/breakpoint
+
+// bootstrap/scss/_variables
+$breakpoints: $grid-breakpoints;
+
+// Wrap up breakpoint lookup
+@mixin bootstrap-bp($key) {
+    @include breakpoint(map-get($breakpoints, $key)) {
+        @content;
+    }
+}
+
+@mixin bootstrap-bp-max($key) {
+    @include breakpoint(max-width map-get($breakpoints, $key)) {
+        @content;
+    }
+}
+
+// Min-width mixins
+// ====================================
+
+@mixin xs() {
+    @include bootstrap-bp(xs) {
+        @content;
+    }
+}
+
+@mixin sm() {
+    @include bootstrap-bp(sm) {
+        @content;
+    }
+}
+
+@mixin md() {
+    @include bootstrap-bp(md) {
+        @content;
+    }
+}
+
+@mixin lg() {
+    @include bootstrap-bp(lg) {
+        @content;
+    }
+}
+
+@mixin xl() {
+    @include bootstrap-bp(xl) {
+        @content;
+    }
+}
+
+// Max-width Mixins
+// ====================================
+
+@mixin xs-max() {
+    @include bootstrap-bp-max(xs) {
+        @content;
+    }
+}
+
+@mixin sm-max() {
+    @include bootstrap-bp-max(sm) {
+        @content;
+    }
+}
+
+@mixin md-max() {
+    @include bootstrap-bp-max(md) {
+        @content;
+    }
+}
+
+@mixin lg-max() {
+    @include bootstrap-bp-max(lg) {
+        @content;
+    }
+}
+
+@mixin xl-max() {
+    @include bootstrap-bp-max(xl) {
+        @content;
+    }
+}
+

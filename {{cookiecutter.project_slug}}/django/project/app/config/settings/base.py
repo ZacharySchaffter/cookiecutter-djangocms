@@ -7,7 +7,6 @@ See:
 """
 import re
 import environ
-from os.path import join
 
 # -------------------------------------
 # GENERAL SETUP
@@ -62,7 +61,7 @@ DEBUG = env.bool("DEBUG", False)
 
 ALLOWED_HOSTS = ("localhost", "127.0.0.1",)
 
-SITE_ID = 1
+DEFAULT_SITE_ID = SITE_ID = 1
 
 SITE_NAME = env("SITE_NAME", default="example.com")
 
@@ -78,14 +77,14 @@ FIXTURE_DIRS = (
 
 # Installed Apps
 # =====================================
+# Order matters, loosely here; i.e., some apps may need to come after others.
+# See:
+#   * https://goo.gl/DJMuuG
+#   * https://goo.gl/55D52S
 
 INSTALLED_APPS = (
-    # Overrides
-    # Apps that must come first (may include local apps)
     "djangocms_admin_style",
     "app.utils",
-
-    # Django apps
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -95,33 +94,26 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "django.contrib.redirects",
     "django.contrib.admin",
-    # "django.contrib.gis",
-    # "django.contrib.gis.geoip",
-
-    # DjangoCMS Apps
+    {% if cookiecutter.use_geo.lower() == "y" %}
+    "django.contrib.gis",
+    "django.contrib.gis.geoip",
+    {% endif %}
     "cms",
     "menus",
     "sekizai",
     "treebeard",
     "djangocms_text_ckeditor",
+    "djangocms_history",
     "filer",
     "easy_thumbnails",
-    "djangocms_link",
+    "parler",
+    "robots",
     "cmsplugin_filer_file",
     "cmsplugin_filer_folder",
     "cmsplugin_filer_image",
     "cmsplugin_filer_utils",
-    "djangocms_style",
-    "djangocms_snippet",
-    "djangocms_googlemap",
-    "djangocms_video",
     "meta",
-
-    # Local apps
     "app.web",
-    "app.ui_kit",
-
-    # Third-party Apps
     "django_extensions",
     "crispy_forms",
     "rest_framework",
@@ -133,28 +125,35 @@ INSTALLED_APPS = (
 
 # Middleware
 # =====================================
+# Note:
+#   * Order matters here.
+#
+# See:
+#   * Django Default Middleware:    https://goo.gl/3McLNt
+#   * Django i18n Middleware:       https://goo.gl/TkmjJZ
+#   * DjangoCMS Middleware:         https://goo.gl/bBddhj
+#   * Django WhiteNoise Middleware: https://goo.gl/b5nztY
 
 MIDDLEWARE = (
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    # Must come first
+    "django.middleware.cache.UpdateCacheMiddleware",
     "cms.middleware.utils.ApphookReloadMiddleware",
-
-    # Default Django middleware.
+    "app.utils.middleware.sites.CMSSiteMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.gzip.GZipMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.contrib.redirects.middleware.RedirectFallbackMiddleware",
-
-    # DjangoCMS
+    "cms.middleware.language.LanguageCookieMiddleware",
     "cms.middleware.user.CurrentUserMiddleware",
     "cms.middleware.page.CurrentPageMiddleware",
     "cms.middleware.toolbar.ToolbarMiddleware",
-    "cms.middleware.language.LanguageCookieMiddleware",
+    "django.middleware.cache.FetchFromCacheMiddleware",
 )
 
 # Databases
@@ -166,8 +165,6 @@ DATABASES = {
         "DATABASE_URL",
         default="postgres://djangodb:djangodb@postgres/djangodb"),
 }
-
-# DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 
 # Logging
 # =====================================
@@ -194,13 +191,8 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.request",
-
-                # DjangoCMS
                 "sekizai.context_processors.sekizai",
                 "cms.context_processors.cms_settings",
-
-                # Local
-                "app.utils.context_processors.global_variables",
                 "app.web.context_processors.web_settings",
             ),
         },
@@ -209,14 +201,6 @@ TEMPLATES = [
 
 # Storages
 # =====================================
-
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
-
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
-
-AWS_BUCKET_NAME = AWS_STORAGE_BUCKET_NAME = env("AWS_BUCKET_NAME", default="")
-
-AWS_QUERYSTRING_AUTH = False
 
 USE_HTTPS_FOR_ASSETS = env.bool("USE_HTTPS_FOR_ASSETS", False)
 
@@ -246,25 +230,22 @@ STATICFILES_FINDERS = (
 
 SERVE_STATIC = False
 
-MEDIA_ROOT = PROJECT_PATH("uploads")
+MEDIA_ROOT = PROJECT_PATH("media")
 
-MEDIA_URL = "/uploads/"
+MEDIA_URL = "/media/"
 
 # Locale / I18N & L10N
 # =====================================
-
-# Set to True to automatically enable django's i81n
-# Note: This is a custom (i.e., non-native Django setting) but is used to
-#       branch in a few places to enable Django's I18N and L10N automatically.
-AUTO_ENABLE_I18N = {% if cookiecutter.use_i18n.lower() == "y" %}True{% else %}False{% endif %}
 
 TIME_ZONE = "America/Los_Angeles"
 
 USE_TZ = True
 
-USE_I18N = AUTO_ENABLE_I18N
+USE_I18N = True
 
-USE_L10N = AUTO_ENABLE_I18N
+USE_L10N = True
+
+PREFIX_DEFAULT_LANGUAGE = False
 
 LANGUAGE_CODE = "en"
 
@@ -301,29 +282,18 @@ CACHES = {
         "TIMEOUT": CACHE_TIMEOUT,
     }
 }
-
-# GEO IP
+{% if cookiecutter.use_geo.lower() == "y" %}
+# Geo Django
 # =====================================
+# See:
+#   * GeoDjango Installation: https://goo.gl/ErkUXv
+#   * Geolocation with GeoLite2: https://goo.gl/Pk6BDT
+#   * GeoLite Databases: https://goo.gl/aHoCRm
 
-# GEOIP_PATH = join(PROJECT_PATH(), "data", "GeoLite2-City.mmdb")
+GEOIP_PATH = PROJECT_PATH("data")
 
-# -------------------------------------
-# VENDOR CONFIGURATION
-# -------------------------------------
-
-
-# Celery
-# =====================================
-
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
-
-# Redis
-# =====================================
-
-REDIS_HOST = env("REDIS_HOST", default="redis://localhost:6379")
-
+DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
+{% endif %}
 
 {% if cookiecutter.use_uploadcare.lower() == "y" %}
 # UploadCare
@@ -335,9 +305,23 @@ UPLOADCARE = {
 }
 {% endif %}
 
-# Redactor
+# Parler
 # =====================================
 
+PARLER_LANGUAGES = {
+    # Fix issue with parler and DjangoCMS
+    # See: https://goo.gl/Gs33Lm
+    1: (
+        {"code": "en", },
+        # {"code": "fr", },  // Temp. Remove fr from site
+    ),
+    "default": {
+        "fallback": "en",
+        "hide_untranslated": False,
+    }
+}
+
+PARLER_DEFAULT_LANGUAGE_CODE = "en"
 
 # Thumbnails
 # =====================================
@@ -348,7 +332,6 @@ THUMBNAIL_PROCESSORS = (
     "filer.thumbnail_processors.scale_and_crop_with_subject_location",
     "easy_thumbnails.processors.filters"
 )
-
 
 # DjangoCMS
 # =====================================
@@ -365,7 +348,8 @@ CMS_LANGUAGES = {
 
 CMS_TEMPLATES = (
     # Customize this
-    ('web/fullwidth.html', 'Fullwidth'),
+    # ("app_name/template_name.html", "Template Menu Name"),
+    ('web/cms/default.html', 'Default Template'),
 )
 
 CMS_PERMISSION = True
@@ -416,20 +400,6 @@ TAGGIT_AUTOSUGGEST_CSS_FILENAME = "taggit-autosuggest.css"
 TAGGIT_AUTOSUGGEST_STATIC_BASE_URL = trim_trailing_slash(STATIC_URL)
 
 
-# Slack
-# =====================================
-
-# SLACK_INCOMING_WEB_HOOK = env(
-#     "SLACK_INCOMING_WEB_HOOK",
-#     default="https://hooks.slack.com/services/xxxxx/xxxxx/"
-#     "xxxxx")
-
-# SLACK_CHANNEL = env(
-#     "SLACK_CHANNEL", default="{{cookiecutter.project_slug}}-logs")
-
-# SLACK_USER_NAME = env("SLACK_USER_NAME", default="Logger:DEV")
-
-
 # Crispy Forms
 # =====================================
 
@@ -457,10 +427,8 @@ REST_FRAMEWORK = {
 
 GTM_CODE = env("GTM_CODE", default="")
 
-OPTIMIZELY_ID = env("OPTIMIZELY_ID", default="")
-
-# Misc
+# Google
 # =====================================
 
 GOOGLE_API_KEY = env("GOOGLE_API_KEY", default="")
-LIVECHAT_LICENSE = env("LIVECHAT_LICENSE", default="")
+

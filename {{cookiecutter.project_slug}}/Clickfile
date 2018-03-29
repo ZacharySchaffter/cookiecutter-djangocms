@@ -1,0 +1,429 @@
+"""
+Test 6 Project's Clickfile.
+
+Index:
+
+- Docker Commands
+- Django Commands
+- Asset Commands
+{% if cookiecutter.use_heroku.lower() == "y" %}- Heroku Commands{% endif %}
+- Root-Level Commands
+
+"""
+# flake8: noqa: E501
+
+import os
+import subprocess
+import shutil
+from klak.cli import root
+from klak.utils import run, shell
+import click
+from path import Path
+
+
+PROJECT_SLUG = "{{cookiecutter.project_slug}}"
+HEROKU_SLUG = "{{cookiecutter.heroku_slug}}"
+LOCALIZED_APPS = ("web", )
+LANGUAGES = ()
+
+
+def _clean_stdout(output):
+    return output.decode("utf-8").strip()
+
+
+# Docker Commands
+# =====================================
+
+
+@root.group()
+def docker():
+    """Docker commands."""
+    pass
+
+
+@docker.command(name="build")
+def docker_build():
+    """Build the local docker container."""
+    shell(
+        f"docker build -f docker/base/Dockerfile -t {PROJECT_SLUG}/web docker")
+
+
+@docker.command(name="up")
+@click.option("-b", "--build", is_flag=True, help="Build local container(s)")
+@click.pass_context
+def docker_up(ctx, build):
+    """Bring up local containers."""
+    if build:
+        ctx.invoke(docker_build)
+
+    shell(f"docker-compose -p {PROJECT_SLUG} up -d")
+
+
+@docker.command(name="down")
+def docker_down():
+    """Remove local containers."""
+    shell("docker-compose down")
+
+
+@docker.command(name="stop")
+def docker_stop():
+    """Stop local containers."""
+    shell("docker-compose stop")
+
+
+@docker.command(name="ls")
+def docker_ls():
+    """List running containers."""
+    shell("docker ps")
+
+
+# Django Commands
+# =====================================
+
+
+@root.group()
+def django():
+    """Django commands."""
+    pass
+
+
+@django.command(name="envfile")
+def django_envfile():
+    """Initialize default .env."""
+    shell("cp -n django/env.dist django/.env")
+
+
+@django.command(name="install")
+def django_install():
+    """Install Python dependencies."""
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django pipenv install --skip-lock -r requirements/local.txt")
+
+
+@django.command(name="shell")
+def django_shell():
+    """Get an interactive Django shell."""
+    shell(f"docker exec -it {PROJECT_SLUG}_django /bin/bash")
+
+
+@django.command(name="reset_db")
+def django_reset_db():
+    """Reset Django/Postgres database."""
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py reset_db --noinput")
+
+{% if cookiecutter.use_geo.lower() == "y" %}
+@django.command(name="reset_postgis")
+def django_reset_postgis():
+    """Reset Django/Postgres postgis."""
+    shell(
+        f'docker exec -u postgres -it {PROJECT_SLUG}_postgres psql -d djangodb -c "CREATE EXTENSION postgis;"')
+{% endif %}
+
+@django.command(name="migrate")
+def django_migrate():
+    """Run Django migrations."""
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py migrate")
+
+
+@django.command(name="create_super_user")
+def django_create_super_user():
+    """Create a default super user."""
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py createsuperuser")
+
+
+@django.command(name="po")
+@click.option(
+    "--apps", default=",".join(LOCALIZED_APPS), help="A comma-separated list")
+@click.option(
+    "--languages", default=",".join(LANGUAGES), help="A comma-separated list")
+def django_po(apps, languages):
+    """Create/update .po files."""
+    _apps = apps.split(",")
+    _languages = languages.split(",")
+
+    for app in _apps:
+        _create_locale_dir(app)
+
+    for language in languages:
+        _create_po_files(language)
+
+
+def _create_locale_dir(app):
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django mkdir -p project/app/{app}/locale")
+
+
+def _create_po_files(lang):
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py makemessages -l {lang}")
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py makemessages -d djangojs --ignore project/\@static/node_modules/ -e ts -l {lang}")
+
+
+
+@django.command(name="mo")
+def django_mo():
+    """Compile .mo files."""
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py compilemessages")
+
+
+@django.command(name="serve")
+def django_serve():
+    """Run Django dev server."""
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py runserver 0.0.0.0:8000")
+
+
+@django.command(name="test")
+def django_test():
+    """Run Django test suite(s)."""
+    shell(f"docker exec -it {PROJECT_SLUG}_django pytest")
+
+
+@django.command(name="init")
+@click.pass_context
+def django_init(ctx):
+    """Initialze local Django container."""
+    ctx.invoke(django_envfile)
+    ctx.invoke(django_install)
+    ctx.invoke(django_reset_db)
+    {% if cookiecutter.use_geo.lower() == "y" %}ctx.invoke(django_reset_postgis){% endif %}
+    ctx.invoke(django_migrate)
+    ctx.invoke(django_create_super_user)
+
+
+# Asset Commands
+# =====================================
+
+
+@root.group()
+def assets():
+    """Static asset commands."""
+
+
+@assets.command(name="init")
+def assets_init():
+    """Install local NPM dependencies."""
+    shell("cd django/project/@static && npm install")
+
+
+@assets.command(name="watch")
+def assets_watch():
+    """Compile and watch local static assets."""
+    shell("cd django/project/@static && npm run watch")
+
+
+@assets.command(name="build")
+def assets_build():
+    """Compile local static assets for production."""
+    shell("cd django/project/@static && npm run build")
+
+{% if cookiecutter.use_heroku.lower() == "y" %}
+# Heroku Commands
+# =====================================
+
+def _ensure_brew():
+    has_brew = shutil.which("brew")
+    if not has_brew:
+        raise click.UsageError("Brew not installed.")
+
+
+def _ensure_heroku():
+    has_heroku = shutil.which("heroku")
+    if not has_heroku:
+        raise click.UsageError("Heroku not installed.")
+
+
+@root.group()
+def heroku():
+    """Heroku Commands."""
+    pass
+
+
+@heroku.command(name="login")
+def heroku_login():
+    """Login to Heroku."""
+    run(["heroku", "login", ])
+    run(["heroku", "container:login", ])
+
+
+@heroku.command(name="create")
+@click.argument("heroku_slug", nargs=1, default=HEROKU_SLUG)
+@click.option("-r", "--heroku_remote", required=True, help="The Heroku (Git) remote.")
+def heroku_create(heroku_slug, heroku_remote):
+    """Create HEROKU_SLUG-HEROKU_REMOTE app."""
+    app_name = f"{heroku_slug}-{heroku_remote}"
+    shell(f"heroku create {app_name} -r {heroku_remote}")
+    shell("heroku addons:create heroku-postgresql:hobby-dev")
+
+
+@heroku.command(name="destroy")
+@click.argument("heroku_slug", nargs=1, default=HEROKU_SLUG)
+@click.option("-r", "--heroku_remote", required=True, help="The Heroku (Git) remote.")
+def heroku_destroy(heroku_slug, heroku_remote):
+    """Destroy HEROKU_SLUG-HEROKU_REMOTE app."""
+    app_name = f"{heroku_slug}-{heroku_remote}"
+    shell(f"heroku apps:destroy {app_name}")
+
+
+@heroku.command(name="configure")
+@click.argument("heroku_slug", nargs=1, default=HEROKU_SLUG)
+@click.option("-r", "--heroku_remote", required=True, help="The Heroku (Git) remote.")
+@click.option("--django_settings_module", prompt=True, default="app.config.settings.prod")
+@click.option("--debug", prompt=True, default="False")
+@click.option("--secret_key", prompt=True, required=True)
+@click.option("--use_https_for_assets", prompt=True, default=True)
+@click.option("--uploadcare_pub_key", prompt=True, default="demopublickey")
+@click.option("--uploadcare_secret_key", prompt=True, default="demoprivatekey")
+def heroku_configure(heroku_slug, heroku_remote, *args, **kwargs):
+    """Configure HEROKU_SLUG-HEROKU_REMOTE app.
+
+    Loop over provided prompt values to set config.
+
+    Notes:
+        * Add additional @click.option(...prompt=True)
+          to add more config values.
+    """
+    app_name = f"{heroku_slug}-{heroku_remote}"
+    config_str = ""
+    for key, value in kwargs.items():
+        config_key = str(key).upper()
+        config_value = str(value).strip()
+        config_str += f'{config_key}={config_value} '
+
+    shell(f"heroku config:set {config_str}")
+
+
+@heroku.command(name="deploy")
+@click.argument("heroku_slug", nargs=1, default=HEROKU_SLUG)
+@click.option("-r", "--heroku_remote", required=True, help="The Heroku (Git) remote.")
+@click.pass_context
+def heroku_deploy(ctx, heroku_slug, heroku_remote):
+    """Deploy HEROKU_SLUG-HEROKU_REMOTE app."""
+    app_name = f"{heroku_slug}-{heroku_remote}"
+    ctx.invoke(assets_build)
+    heroku_docker_build_env(app_name)
+    heroku_docker_build(app_name)
+    heroku_docker_push(app_name)
+    herkou_docker_post_push(app_name)
+
+
+def heroku_docker_build_env(app_name):
+    """Create Heroku deploy container .env."""
+    build_path = Path("./django/.build/")
+    env_path = os.path.join(build_path.realpath(), ".env")
+    secret_key = subprocess.check_output(
+        f"heroku config:get SECRET_KEY -a {app_name}", shell=True)
+
+    build_path.mkdir_p()
+    env_path.remove_p()
+    secret_key = _clean_stdout(secret_key)
+
+    with open(env_path, "a") as env_file:
+        env_file.write(f'ASSET_VERSION="{_asset_version()}"\n')
+        env_file.write(f'SECRET_KEY="{secret_key}"\n')
+
+
+def heroku_docker_build(app_name):
+    """Build Heroku deploy container."""
+    shell(
+        f"docker build --build-arg ASSET_VERSION={_asset_version()} . -f docker/heroku/Dockerfile -t registry.heroku.com/{app_name}/web:latest"
+    )
+
+
+def _asset_version():
+    """Get the current ASSET_VERSION."""
+    asset_version = subprocess.check_output("git rev-parse HEAD", shell=True)
+    return _clean_stdout(asset_version)
+
+
+def heroku_docker_push(app_name):
+    """Push latest Heroku deploy container."""
+    shell(f"docker push registry.heroku.com/{app_name}/web")
+
+
+def herkou_docker_post_push(app_name):
+    """Perform post-Heroku-push actions."""
+    build_path = Path("./django/.build/")
+    shell(f"heroku run -a {app_name} python manage.py migrate")
+    shell(f"heroku run -a {app_name} python manage.py createsuperuser")
+    shutil.rmtree(build_path.realpath())
+
+
+@heroku.command(name="init")
+@click.pass_context
+def heroku_init(ctx):
+    """Init system for Heroku."""
+    heroku_cli_install()
+    heroku_plugins_install()
+    ctx.invoke(heroku_login)
+
+
+def heroku_cli_install():
+    """Install heroku cli."""
+    _ensure_brew()
+    try:
+        _ensure_heroku()
+        click.echo("Heroku CLI already installed.")
+    except click.UsageError:
+        shell("brew install heroku/brew/heroku")
+
+
+def heroku_plugins_install():
+    """Install Heroku plugins."""
+    shell("heroku plugins:install heroku-container-registry")
+
+
+@heroku.command(name="add_remote")
+@click.argument("heroku_slug", nargs=1, default=HEROKU_SLUG)
+@click.option("-r", "--heroku_remote", required=True, help="The Heorku remote.")
+def heroku_add_remote(heroku_slug, heroku_remote):
+    """Add HEROKU_SLUG-HREOKU_REMOTE app remote."""
+    app_name = f"{heroku_slug}-{heroku_remote}"
+    shell(f"git remote add {heroku_remote} https://git.heroku.com/{app_name}.git")
+{% endif %}
+
+# Root-Level Commands
+# =====================================
+
+
+@root.command(name="init")
+@click.pass_context
+def root_init(ctx):
+    """Initialize project."""
+    ctx.invoke(django_init)
+    ctx.invoke(assets_init)
+
+
+@root.command(name="serve")
+@click.pass_context
+def root_serve(ctx):
+    """Serve project."""
+    ctx.invoke(django_serve)
+
+
+@root.command(name="watch")
+@click.pass_context
+def root_watch(ctx):
+    """Compile and watch project assets."""
+    ctx.invoke(assets_watch)
+
+
+@root.command(name="up")
+@click.option(
+    "-b", "--build", is_flag=True, help="Build local container(s)")
+@click.pass_context
+def root_up(ctx, build):
+    """Bring up project container(s)."""
+    ctx.invoke(docker_up, build=build)
+
+
+@root.command(name="test")
+@click.pass_context
+def root_test(ctx):
+    """Run project test suite(s)."""
+    ctx.invoke(django_test)

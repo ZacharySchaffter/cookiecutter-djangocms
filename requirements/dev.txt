@@ -1,0 +1,10 @@
+cookiecutter==1.6.0
+pytest
+mypy
+flake8
+pep8
+pydocstyle
+autopep8
+pylint
+klak
+path.py

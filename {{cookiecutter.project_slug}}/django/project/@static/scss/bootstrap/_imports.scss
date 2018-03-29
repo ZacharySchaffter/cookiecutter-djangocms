@@ -1,0 +1,11 @@
+// ------------------------------------
+// BOOTSTRAP
+// ------------------------------------
+// Contains all boostrap scss that _does not create css_.
+
+
+@import "~bootstrap_scss/functions";
+@import "./variables";
+@import "~bootstrap_scss/variables";
+@import "~bootstrap_scss/mixins";
+@import "./mixins";

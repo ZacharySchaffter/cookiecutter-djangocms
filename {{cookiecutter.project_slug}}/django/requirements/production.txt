@@ -1,6 +1,9 @@
+# -------------------------------------
+# PRODUCTION REQUIREMENTS
+# -------------------------------------
 -r base.txt
 
 gevent==1.2.2
-django-postgrespool==0.3.0
-newrelic==2.32.0.28
-
+{% if cookiecutter.use_geo.lower() == "n" %}
+django-postgrespool==0.3.1
+{% endif %}

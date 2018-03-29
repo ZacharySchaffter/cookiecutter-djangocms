@@ -1,0 +1,48 @@
+"""Cookiecutter Django Clickfile."""
+
+import os
+import subprocess
+from klak.cli import root
+from klak.utils import run, shell
+import click
+from path import Path
+
+
+# Cookiecutter Commands
+# =====================================
+
+
+@root.group()
+def cookiecutter():
+    """Cookiecutter commands."""
+    pass
+
+@cookiecutter.command(name="bake")
+@click.option(
+    "-o", "--output_dir", required=True, help="The template output directory.")
+def cookiecutter_bake(output_dir):
+    """Output this template for manual testing."""
+    path = Path(output_dir)
+
+    if not path.isdir():
+        raise click.UsageError("--output_dir must be a directory.")
+
+    realpath = path.realpath()
+
+    shell(
+        f"cookiecutter -o {realpath} ./", stderr=subprocess.PIPE)
+
+
+# Test Commands
+# =====================================
+
+
+@root.group()
+def test():
+    """Test commands."""
+    pass
+
+@test.command(name="python")
+def test_python():
+    """Run Python test suite."""
+    shell("py.test")

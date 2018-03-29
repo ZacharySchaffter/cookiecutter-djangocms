@@ -1,7 +1,8 @@
 version: "2"
 services:
   django:
-    image: python:3
+    image: {{cookiecutter.project_slug}}/web
+    container_name: {{cookiecutter.project_slug}}_django
     ports:
       - "8000:8000"
     volumes:
@@ -13,15 +14,17 @@ services:
     links:
       - postgres:postgres
     environment:
-      DJANGO_SETTINGS_MODULE: app.config.settings.local
       PYTHONPATH: /usr/app/django/project:/usr/app/django/project/vendor
+      DJANGO_SETTINGS_MODULE: app.config.settings.local
       PIPENV_VENV_IN_PROJECT: 1
-      DEBUG: "true"
+      PIPENV_DOTENV_LOCATION: .pipenv
+      SHELL: /bin/bash
     logging:
       driver: none
 
   postgres:
-    image: postgres:latest
+    {% if cookiecutter.use_geo.lower() == "y" %}image: mdillon/postgis{% else %}image: postgres:latest{% endif %}
+    container_name: {{cookiecutter.project_slug}}_postgres
     restart: always
     volumes:
       - /usr/lib/postgresql

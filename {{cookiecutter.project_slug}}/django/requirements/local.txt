@@ -1,5 +1,14 @@
+# -------------------------------------
+# LOCAL REQUIREMENTS
+# -------------------------------------
 -r base.txt
 
-django-debug-toolbar~=1.6.0
+django-debug-toolbar==1.9.0
+pytest
+mypy
+flake8
+pep8
+pydocstyle
+autopep8
 pylint
-coverage
+pdbpp

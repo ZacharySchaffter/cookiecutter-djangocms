@@ -1,125 +1,186 @@
 [Docker for Mac]: https://docs.docker.com/docker-for-mac/install/  "Download Docker for Mac"
-[Docker for Windows]: https://docs.docker.com/docker-for-windows/install/  "Download Docker for Windows"
+[Docker]: https://docs.docker.com/docker-for-mac/install/  "Download Docker for Mac"
 [Docker Hub]: https://hub.docker.com/ "Docker Hub Homepage"
-[BLITZ DockerHub]: https://hub.docker.com/u/blitzagency/ "BLITZ DockerHub"
 [Node & Npm]: https://nodejs.org/en/download/ "Intsall Node"
 [Homebrew]: http://brew.sh/ "Homebrew Homepage"
 [Heroku]: https://www.heroku.com/ "Heroku Homepage"
+[Virtualenv]: https://virtualenv.pypa.io/en/stable/ "Virtualenv Docs"
+[Virtualenvwrapper]: https://virtualenvwrapper.readthedocs.io/ "Virtualenvwrapper Docs"
+[Pipenv]: https://docs.pipenv.org/ "Pipenv Docs"
+[Heroku CLI]: https://devcenter.heroku.com/articles/heroku-cli "Heroku CLI Homepage"
+[Git]: https://example.com "Git Homepage"
+[Python]: https://example.com "Python Homepage"
 
 # {{ cookiecutter.project_name }}
 
-## Contribute
+## System Requirements
 
-- [See CONTRIBUTING.md](./CONTRIBUTING.md)
-
-## Learn
-
-- [Docs](./docs)
-
-## Required
-
-- [Docker Hub] account
-- [BLITZ DockerHub] Access
-{% if cookiecutter.use_heroku.lower() == "y" %}- BLITZ [Heroku] Access (or a valid Heroku account added as a collaborator){% endif %}
-- [Docker for Mac] __or__ [Docker for Windows]
+- macOS
+- [Homebrew]
+- [Git]
+- [Python] (3.6)
+- [Pipenv]
+- [Docker]
 - [Node & Npm]
-    - Must be installed locally
-    - [OSX] `brew install node` (requires [Homebrew])
 
 ## Setup
 
-> If you're running __Windows__, please first read [Initial Setup For Windows](./docs/windows-setup.md).
-
+Terminal session 1:
 ```bash
-# From a terminal run
-# After running this, you may need to fill out required settings
-cp django/env.dist django/.env
+# Setup virtual environment
+pipenv install -r requirements/dev.txt
+pipenv shell
 
-make up
-make init
-make serve
-
-# From another terminal run
-make assets
+# Start local dev
+# -b builds the local {{cookiecutter.project_slug}}/web docker image
+klak up -b
+klak init
+klak serve
 ```
 
-> Site is available at <http://localhost:8000>, <http://docker.local:8000> (requires etc/hosts entry).
+Terminal session 2:
+```bash
+# Activate virtual env (if not already activated)
+pipenv shell
+
+# Compile/watch static assets
+klak watch
+```
+
+> [View Site](http://localhost:8000)
 
 ## Start
 
-```bash
-# From a terminal run
-make up
-make serve
+__STOP:__ You must first complete [Setup](#setup)!
 
-# From another terminal run
-make assets
+Terminal session 1:
+
+```bash
+# Activate virtual env (if not already activated)
+pipenv shell
+
+# Start local dev
+klak up
+klak serve
 ```
 
-> Site is available at <http://localhost:8000>, <http://docker.local:8000> (requires etc/hosts entry).
+Terminal session 2:
+
+```bash
+# Activate virtual env (if not already activated)
+pipenv shell
+
+# Compile/watch assets
+klak watch
+```
+
+> [View Site](http://localhost:8000)
 
 ## Test
 
 ```bash
-# Run Python / Django test suite
-make test.py
+# Activate virtual env
+pipenv shell
 
-# Run Javascript test suite
-make test.js
+# Run Python / Django test suite
+klak test
 ```
 
 ## Automate
 
 ```bash
 # To see latest help message run
-make help
+klak --help
+klak <command> --help
+klak <command> <subcommand> --help
 ```
 
-## Deploy
+## Deploys
+
 {% if cookiecutter.use_heroku.lower() == "y" %}
-> TODO: Update this table as env's become available
+__Notes__:
 
-| Env Name | Description | Available |
-|:-        | :-          | :-        | 
-| Dev      | This is a raw testing environment, least stable | no
-| Staging  | This is a client preview enviornment, more stable than dev | no
-| Prod     | This is the live enviornment, stable | no
+* Deploys use Heroku and require the [Heroku CLI] & [Git].
+* For more information see [docks/heroku.md](./docs/heroku.md).
 
-### Setup
+### Environments
+
+| Env | Desc. | App | Remote | Link |
+| :--  | :-- | :-- | :-- | :-- |
+| Dev | Least stable | {{cookiecutter.heroku_slug}}-dev | `dev` | [View Site](https://{{cookiecutter.heroku_slug}}-dev.herokuapp.com)  |
+| Int | More stable, QA | {{cookiecutter.heroku_slug}}-int | `int` | [View Site](https://{{cookiecutter.heroku_slug}}-int.herokuapp.com) |
+| Prod | Live | {{cookiecutter.heroku_slug}}-prod | `prod` | [View Site](https://{{cookiecutter.heroku_slug}}-prod.herokuapp.com) |
+
+### Create Apps
+
+__Notes__:
+
+* If the apps already exist, instead follow [Add Remotes](#add-remotes).
 
 ```bash
-git remote add dev https://git.heroku.com/{{ cookiecutter.heroku_slug }}-dev.git
-git remote add staging https://git.heroku.com/{{ cookiecutter.heroku_slug }}-staging.git
-git remote add prod https://git.heroku.com/{{ cookiecutter.heroku_slug }}-prod.git
+# Activate virtual env (if not already activated)
+pipenv shell
+
+# Usually only necessary once per system
+klak heroku init
+# __OR__ (if you've run the above before)
+klak heroku login
+
+# Create dev
+klak heroku create -r dev
+klak heroku configure -r dev
+
+# Create int
+klak heroku create -r int
+klak heroku configure -r int
+
+# Create prod
+klak heroku create -r prod
+klak heroku configure -r prod
 ```
 
-### Push
+### Add Remotes
+
+__Notes__:
+
+* If you haven't added apps yet, instead follow [Create Apps](#create-apps).
 
 ```bash
-# Valid env-names are:
-# dev
-# staging
-# prod
-make heroku.deploy ENV_NAME=<env-name>
+# Add dev
+klak heroku add_remote -r dev
+
+# Add int
+klak heroku add_remote -r int
+
+# Add prod
+klak heroku add_remote -r prod
 ```
 
+### Deploy Latest
+
+__Notes__:
+
+* If you haven't added apps yet first see [Create Apps](#create-apps).
+* If the apps already exist, first see [Add Remotes](#add-remotes).
+
+```bash
+# Deploy dev
+klak heroku deploy -r dev
+
+# Deploy int
+klak heroku deploy -r int
+
+# Deploy prod
+klak heroku deploy -r prod
+```
 {% else %}
-> TODO: Write
-
+> TODO: Write Deploy Documentation
 {% endif %}
 
-## Notes
+## Contribute
 
-### Images in HTML
-> This setup isn't ideal, we are looking for alternatives. 😞
+- [See CONTRIBUTING.md](./CONTRIBUTING.md)
 
-Images in HTML and other files that do not use a `require` statement (except for .scss) will not be picked up / watched by Webpack. A workaround has been added to __@static/@imgs__.
+## Documentation
 
-This workaround forces webpack to copy all image files under __@static/@imgs__ into the path specified in the loader configured to load images in __webpack.config.js__.
-
-There are a couple of gotchas:
-
-
-1. Any subdirs in __@imgs__ are discarded, so simply reference image paths like so: `{% raw %}{% static "imgs/path-to-file-no-subdir.png" %}{% endraw %}`.
-2. All image files _must have unique names_.
-3. If webpack isn't picking up new image files in __@imgs__ restart the `make assets` process.
+- [Docs](./docs)
