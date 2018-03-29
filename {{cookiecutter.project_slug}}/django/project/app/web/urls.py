@@ -1,10 +1,8 @@
 from django.conf.urls import url
 from django.views import defaults as default_views
-from . import views
 
 
 urlpatterns = [
-    url(r"^$", views.HomeView.as_view(), name="home"),
     url(r"^400/$", default_views.bad_request,
         kwargs={"exception": Exception("Bad Request!")}),
     url(r"^403/$", default_views.permission_denied,

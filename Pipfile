@@ -1,0 +1,29 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+cookiecutter = "==1.6.0"
+pytest = "*"
+mypy = "*"
+"flake8" = "*"
+"pep8" = "*"
+pydocstyle = "*"
+"autopep8" = "*"
+pylint = "*"
+klak = "*"
+"path.py" = "*"
+pdbpp = "*"
+
+
+[dev-packages]
+
+
+
+[requires]
+
+python_version = "3.6"

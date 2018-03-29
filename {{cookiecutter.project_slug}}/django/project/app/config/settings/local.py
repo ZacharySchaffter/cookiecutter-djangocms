@@ -12,7 +12,7 @@ from .base import *
 ALLOWED_HOSTS += ("docker.local", ".ngrok.io",)
 
 SECRET_KEY = env(
-    "SECRET_KEY", default="ao3*fxyl(&(9#rpjr2stfi5n5m^@vtz_p9c6rk&m+nx8v+aa)y")
+    "SECRET_KEY", default="CHANGEME!!")
 
 # Installed Apps
 # =====================================
@@ -37,7 +37,9 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "%(name)s %(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
+            "format": (
+                "%(name)s:%(lineno)s %(levelname)s %(asctime)s %(module)s "
+                "%(process)d %(thread)d %(message)s")
         },
         "simple": {
             "format": "%(levelname)s %(asctime)s %(message)s"
@@ -55,22 +57,27 @@ LOGGING = {
         "": {
             "handlers": ["stream", ],
             "level": LOG_LEVEL,
-            # "propagate": False,
         },
         "django.db": {
             "handlers": ["stream", ],
             "level": LOG_LEVEL,
-            # "propagate": False,
         },
         "z.pool": {
             "handlers": ["stream", ],
             "level": LOG_LEVEL,
-            # "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["stream", ],
+            "level": "WARNING",
         },
         "django": {
             "handlers": ["stream", ],
             "level": LOG_LEVEL,
-            # "propagate": False,
+        },
+        "app.convergys": {
+            "handlers": ["stream", ],
+            "level": "DEBUG",
+            "propagate": False,
         },
     }
 }

@@ -24,7 +24,9 @@ INSTALLED_APPS += (
 # Databases
 # =====================================
 
+{% if cookiecutter.use_geo.lower() == "n" %}
 DATABASES["default"]["ENGINE"] = "django_postgrespool"
+{% endif %}
 
 DATABASE_POOL_ARGS = {
     "max_overflow": 7,
@@ -37,103 +39,54 @@ DATABASE_POOL_ARGS = {
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# DEFAULT_FILE_STORAGE = "app.utils.storage.MediaRootS3BotoStorage"
-
-# ASSET_PROTOCOL = "https" if USE_HTTPS_FOR_ASSETS else "http"
-
-# # THIS IS VERY IMPORTANT TO MAKE COMPRESSOR WORK!!!!!!
-# ASSET_PORT = ":443" if USE_HTTPS_FOR_ASSETS else ""
-
-# STATIC_URL = "{}://{}.s3.amazonaws.com{}/".format(
-#     ASSET_PROTOCOL, AWS_STORAGE_BUCKET_NAME, ASSET_PORT)
-
-# MEDIA_URL = "{}://{}.s3.amazonaws.com/uploads/".format(
-#     ASSET_PROTOCOL, AWS_STORAGE_BUCKET_NAME)
-
-# if ASSET_VERSION:
-#     # set path of assets in s3 bucket, note this is '' by default
-#     AWS_LOCATION = "%s/" % ASSET_VERSION
-#     STATIC_URL += AWS_LOCATION
-
-# Email / SMTP
-# =====================================
-
-# TODO: Update to use env
-
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
-
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-
-EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="your_email@example.com")
-
-EMAIL_PORT = env("EMAIL_PORT", default=587)
-
-EMAIL_SUBJECT_PREFIX = "[%s] " % SITE_NAME
-
-EMAIL_USE_TLS = True
-
-SERVER_EMAIL = EMAIL_HOST_USER
-
 # Logging
 # =====================================
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "filters": {
-        "require_debug_false": {
-            "()": "django.utils.log.RequireDebugFalse"
-        },
-        "ratelimit": {
-            "()": "app.utils.error_ratelimit_filter.RateLimitFilter",
-        }
-    },
     "formatters": {
         "verbose": {
-            "format": "%(name)s %(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
+            "format": (
+                "%(name)s:%(lineno)s %(levelname)s %(asctime)s %(module)s "
+                "%(process)d %(thread)d %(message)s")
         },
         "simple": {
             "format": "%(levelname)s %(asctime)s %(message)s"
         },
     },
     "handlers": {
-        "mail_admins": {
-            "level": "ERROR",
-            "filters": ["require_debug_false", "ratelimit"],
-            "class": "django.utils.log.AdminEmailHandler"
-        },
         "stream": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        },
-        "slack": {
-            "level": "ERROR",
-            "class": "app.utils.log.SlackHandler",
             "formatter": "verbose",
         },
     },
 
     "loggers": {
         "": {
-            "handlers": ["slack", "stream", ],
+            "handlers": ["stream", ],
             "level": LOG_LEVEL,
-            "propagate": False,
         },
         "django.db": {
-            "handlers": ["slack", "stream", ],
+            "handlers": ["stream", ],
             "level": LOG_LEVEL,
-            "propagate": False,
         },
         "z.pool": {
-            "handlers": ["slack", "stream", ],
+            "handlers": ["stream", ],
             "level": LOG_LEVEL,
-            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["stream", ],
+            "level": "WARNING",
         },
         "django": {
-            "handlers": ["slack", "stream", ],
+            "handlers": ["stream", ],
+            "level": LOG_LEVEL,
+        },
+        "app.convergys": {
+            "handlers": ["stream", ],
+            "level": "DEBUG",
             "propagate": False,
         },
     }

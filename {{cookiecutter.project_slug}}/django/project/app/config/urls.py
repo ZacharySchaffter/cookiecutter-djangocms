@@ -11,26 +11,37 @@ from cms.sitemaps import CMSSitemap
 
 admin.autodiscover()
 
+handler400 = 'app.web.views.bad_request'
+handler403 = 'app.web.views.permission_denied'
+handler404 = 'app.web.views.page_not_found'
+handler500 = 'app.web.views.server_error'
 
 # -------------------------------------
-# PROJECT URLS
+# URLS CONFIG
 # -------------------------------------
 # See: https://docs.djangoproject.com/en/dev/topics/http/urls/#example
 
+js_catalog_packages = ("app.web", )
+
 urlpatterns = [
+    # Enable set_language url
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    # Enable JS catalog
+    url(
+        r"jsi18n/$",
+        JavaScriptCatalog.as_view(packages=js_catalog_packages),
+        name="javascript-catalog"
+    ),
+    # Project Urls
     url(r"^admin/", include(admin.site.urls)),
     url(r'^taggit_autosuggest/', include("taggit_autosuggest.urls")),
     url(r"^", include("cms.urls")),
 ]
 
-if settings.AUTO_ENABLE_I18N:
-    urlpatterns = i18n_patterns(*urlpatterns)
-
-    urlpatterns += [
-        url(r"^jsi18n/$",
-            JavaScriptCatalog.as_view(packages=["app.web"]),
-            name="javascript-catalog"),
-    ]
+# Create localized urls
+urlpatterns = i18n_patterns(
+    *urlpatterns,
+    prefix_default_language=settings.PREFIX_DEFAULT_LANGUAGE)
 
 
 # Non-Localized Urls

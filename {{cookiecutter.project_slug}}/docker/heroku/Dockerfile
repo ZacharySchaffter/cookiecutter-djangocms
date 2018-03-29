@@ -1,10 +1,14 @@
 # -------------------------------------
 # DOCKERFILE
 # -------------------------------------
-# https://github.com/blitzagency/python-web
-# https://hub.docker.com/r/blitzagency/python-web/
+# Notes:
+#   * You must build {{cookiecutter.project_slug}}/web
+#    before building this image!
+#
+# See:
+#   * Dockerfile Best Practices: https://goo.gl/ZQh6da
 
-FROM blitzagency/python-web:3
+FROM {{cookiecutter.project_slug}}/web
 
 # Build Args
 # =====================================
@@ -28,11 +32,7 @@ WORKDIR /usr/app
 # Install Dependencies
 # =====================================
 
-# Copy requirements before copying over all other files,
-# preferred better caching, see:
-# https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/#add-or-copy
-#
-# NOTE: Avoiding ./requirements/local.txt so we don't invalidate the cache for
+# Avoiding ./requirements/local.txt so we don't invalidate the cache for
 # a local only update to reqs.
 
 COPY ./django/requirements/base.txt ./requirements/base.txt
@@ -45,8 +45,6 @@ RUN pip install -r ./requirements.txt
 
 # Copy Local Files
 # =====================================
-# Copy is (usually) preferred over Add, see:
-#   https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/#add-or-copy
 
 COPY ./django/ ./
 
@@ -75,9 +73,8 @@ ENV ASSET_VERSION=$ASSET_VERSION
 # User Setup
 # =====================================
 # Recommended, run the image as non-root
-# See: https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/#user
 
-RUN adduser -D heroku
+RUN groupadd -r heroku && useradd --no-log-init -r -g heroku heroku
 USER heroku
 
 # Start the App
@@ -85,4 +82,4 @@ USER heroku
 # CMD is required to run on Heroku
 # $PORT is set by Heroku
 
-CMD newrelic-admin run-program gunicorn app.config.wsgi --bind 0.0.0.0:$PORT -w 2 -k gevent
+CMD gunicorn app.config.wsgi --bind 0.0.0.0:$PORT -w 2 -k gevent

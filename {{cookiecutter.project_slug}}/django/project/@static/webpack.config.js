@@ -14,51 +14,31 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var publicPath = '/static/';
 
-// HEROKU
-if(process.env.IS_HEROKU){
-    var protocol = process.env.USE_HTTPS_FOR_ASSETS ? "https" : "http"
-    publicPath = `${protocol}://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${process.env.VERSION}/`
-} else if(process.env.STATIC_URL_BASE){
-    var staticUrlBase = process.env.STATIC_URL_BASE;
-
-    if(staticUrlBase[staticUrlBase.length - 1] == '/'){
-        staticUrlBase = staticUrlBase.substring(0, staticUrlBase.length - 1)
-    }
-
-    publicPath = staticUrlBase + '/';
-}
-
-
 var config = {
     context: path.resolve(__dirname),
     entry: {
-        // necessary to copy image files to /static, see README.md
-        "imgs":       "./@imgs/index.js",
-        "js/common":  "common/index.js",
-        "css/common": "common/index.scss",
-        "js/ui-kit":  "ui-kit/index.js",
-        "css/ui-kit": "ui-kit/index.scss",
-        "js/home":    "home/index.js",
-        "css/home":   "home/index.scss",
+        "js/common": "common/index.js",
+        "js/ui-kit": "ui-kit/index.js",
+        "css/styles": "styles.scss",
     },
     output: {
-        path:          path.resolve(__dirname, "../static"),
-        filename:      "[name].js",
-        publicPath:    publicPath,
+        path: path.resolve(__dirname, "../static"),
+        filename: "[name].js",
+        publicPath: publicPath,
         chunkFilename: "[id].chunck.[ext]"
     },
     plugins: [
         new webpack.optimize.CommonsChunkPlugin({
-          name:     "js/common",
-          filename: "js/common.js"
+            name: "js/common",
+            filename: "js/common.js"
         }),
-        new ExtractTextPlugin({filename: "[name].css"}),
-        new BundleTracker({filename: "../../webpack-stats.json"}),
+        new ExtractTextPlugin({ filename: "[name].css" }),
+        new BundleTracker({ filename: "../../webpack-stats.json" }),
         new webpack.ProvidePlugin({
-            "fetch":   "imports?this=>global!exports?global.fetch!whatwg-fetch",
+            "fetch": "imports?this=>global!exports?global.fetch!whatwg-fetch",
             "Promise": "bluebird",
-            "$":       "jquery",    // bootstrap.js support
-            "jQuery":  "jquery",    // bootstrap.js support
+            "$": "jquery",              // bootstrap.js support
+            "jQuery": "jquery",         // bootstrap.js support
         }),
         // SEE: https://github.com/kevlened/copy-webpack-plugin
         new CopyWebpackPlugin([
@@ -108,9 +88,7 @@ var config = {
             },
             {
                 test: /\.(woff2?|eot|ttf|svg)(\?\S*)?$/,
-                exclude: [
-                    path.resolve(__dirname, "@imgs")
-                ],
+                exclude: [],
                 use: [
                     {
                         loader: "file-loader",
@@ -136,29 +114,28 @@ var config = {
     resolve: {
         extensions: [".webpack.js", "web.js", ".ts", ".tsx", ".js"],
         alias: {
-            "webworkify":        "webworkify-webpack",
-            "bootstrap":         "bootstrap-sass/assets/javascripts/bootstrap",
-            "bootstrap-styles":  "bootstrap-sass/assets/stylesheets",
-            "breakpoint-styles": "breakpoint-sass/stylesheets",
-            "bourbon-styles":    "bourbon/app/assets/stylesheets",
+            "webworkify": "webworkify-webpack",
+            "bootstrap_scss": "bootstrap/scss",
+            "breakpoint": "breakpoint-sass/stylesheets",
+            "bourbon": "bourbon/core",
         },
-        modules: ["node_modules", "@modules", "@css", "@imgs", "@tests"]
+        modules: ["node_modules", "js", "scss",]
     }
 
 }
 
-if (process.env.WEBPACK_ENV == 'production'){
+if (process.env.WEBPACK_ENV == 'production') {
     config.plugins = config.plugins.concat([
         new webpack.optimize.UglifyJsPlugin({
-        compress: {
-            screw_ie8: true,
-            warnings: false,
-            unsafe_comps: true,
-            unsafe: true,
-            pure_getters: true
-        },
-        comments: false,
-        sourceMap: true
+            compress: {
+                screw_ie8: true,
+                warnings: false,
+                unsafe_comps: true,
+                unsafe: true,
+                pure_getters: true
+            },
+            comments: false,
+            sourceMap: true
         })
     ])
 
