@@ -17,7 +17,6 @@ pydocstyle = "*"
 pylint = "*"
 klak = "*"
 "path.py" = "*"
-pdbpp = "*"
 
 
 [dev-packages]

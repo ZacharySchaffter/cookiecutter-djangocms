@@ -1,2 +1,4 @@
+-r ../django/requirements/local.txt
+
 klak
 path.py

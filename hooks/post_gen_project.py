@@ -102,26 +102,30 @@ def ensure_git_repo(project_directory):
         init_git_repo()
 
     elif is_repo and is_repo_root:
-        raise Exception("{} is already a git repository!".format(project_directory))
+        raise Exception(
+            "{} is already a git repository!".format(project_directory))
 
 
 def is_git_repo_root(project_directory):
-    completed = subprocess.run(["git", "rev-parse", "--show-toplevel"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    completed = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     result = str(completed.stdout.strip(), "utf-8")
     return result == str(project_directory)
 
 
 def is_git_repo(project_directory):
-    completed = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    completed = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     result = str(completed.stdout.strip(), "utf-8")
     return result == "true"
 
 
 def init_git_repo():
     subprocess.run(["git", "init"], check=True, stdout=open(os.devnull, "wb"))
-    subprocess.run(["git", "add", "-A"], check=True, stdout=open(os.devnull, "wb"))
+    subprocess.run(["git", "add", "-A"], check=True,
+                   stdout=open(os.devnull, "wb"))
     subprocess.run(
-        ["git", "commit", "-m", "'chore(project): Initial commit'"], check=True,
+        ["git", "commit", "-m", "chore(project): Initial commit"], check=True,
         stdout=open(os.devnull, "wb")
     )
 

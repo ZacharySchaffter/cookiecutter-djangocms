@@ -4,7 +4,7 @@
 
 Running Django from a Docker container presents certain challenges when selecting a Python interpeter in VSCode.
 
-This template works around this by installing [Pipenv] (local Django container only). [Pipenv] creates a `.venv` in a shared directory, `/django/.venv/`, to which VSCode can point to via workspace settings.
+This template works around this by installing the project dependencies both in the local/active Virtualenv and on the container.
 
 ## Set Workspace Python Path
 

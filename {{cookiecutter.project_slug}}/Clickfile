@@ -385,6 +385,46 @@ def heroku_add_remote(heroku_slug, heroku_remote):
     """Add HEROKU_SLUG-HREOKU_REMOTE app remote."""
     app_name = f"{heroku_slug}-{heroku_remote}"
     shell(f"git remote add {heroku_remote} https://git.heroku.com/{app_name}.git")
+
+
+@heroku.command(name="import_db")
+@click.argument("heroku_slug", nargs=1, default=HEROKU_SLUG)
+@click.option("-r", "--heroku_remote", required=True, help="The Heorku remote.")
+@click.option(
+    "-c", "--capture", is_flag=True, help="Capture new backup before downloading")
+def heroku_import_db(heroku_slug, heroku_remote, capture):
+    """Import DB from HEROKU_SLUG-HEROKU_REMOTE."""
+    app_name = f"{heroku_slug}{heroku_remote}"
+    latest_dump = Path("./latest.dump")
+    latest_dump.remove_p()
+
+    if capture:
+        _capture_heroku_db(app_name)
+
+    click.echo("Downloading db from Heroku...")
+
+    shell(f"heroku pg:backups:download -a {app_name} -o {latest_dump.realpath()}")
+    _restore_heroku_db()
+
+    # Do some cleanup
+    latest_dump.remove_p()
+
+
+def _restore_heroku_db():
+    """Import Heroku db into local Postgres container."""
+    postgres_app_root = "/usr/app/django"
+    postgres_db_dump = f"{postgres_app_root}/latest.dump"
+    postgres_restore_script = f"{postgres_app_root}/scripts/heroku_restore_db.sh"
+    postgres_import_exec = f"su postgres -c '{postgres_restore_script} import {postgres_db_dump}'"
+
+    click.echo("Importing db into local postgres...")
+    shell(f"docker exec -it {PROJECT_SLUG}_postgres {postgres_import_exec}")
+
+
+def _capture_heroku_db(app_name):
+    """Create a new postgres backup on Heroku."""
+    click.echo("Capturing new backup, this may take a minute...")
+    shell(f"heroku pg:backups:capture -a {app_name} > /dev/null")
 {% endif %}
 
 # Root-Level Commands

@@ -16,6 +16,7 @@ webpack-stats.json
 cors.json
 django/.venv
 django/Pipfile
+latest.dump
 
 # UNIGNORE
 # =====================================

@@ -13,7 +13,7 @@
         {% if child.sibling    %} nav-item-sibling    {% endif %}
         {% if child.descendant %} nav-item-descendant {% endif %}"
         >
-        <a class="nav-item-link" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">{{ child.get_menu_title }}</a>
+        <a class="nav-link" href="{{ child.attr.redirect_url|default:child.get_absolute_url }}">{{ child.get_menu_title }}</a>
     </li>
     {% endfor %}
 </ul>
