@@ -1,5 +1,9 @@
 # History
 
+## v0.2.0
+
+* Bump version
+
 ## v0.2.0-rc
 
 * fix(web): Address issue #13
