@@ -1,0 +1,20 @@
+{% raw %}
+{% extends "web/base.html" %}
+{% load staticfiles sekizai_tags %}
+
+{% block extra_head %}
+    {% addtoblock "css" %}
+        <link rel="stylesheet" href="{% static "css/ui_kit.css" %}">
+    {% endaddtoblock %}
+{% endblock extra_head %}
+
+{% block body_class %}body--ui-kit{% endblock body_class %}
+
+{% block header %}
+    {% include "ui_kit/partials/header.html" %}
+{% endblock header %}
+
+{% block footer %}
+    {% include "ui_kit/partials/footer.html" %}
+{% endblock footer %}
+{% endraw %}

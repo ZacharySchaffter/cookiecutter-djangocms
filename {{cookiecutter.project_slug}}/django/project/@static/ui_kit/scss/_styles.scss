@@ -1,0 +1,60 @@
+// ------------------------------------
+// UI KIT STYLES
+// ------------------------------------
+// This file _can generate css_.
+
+@import "./scaffold";
+
+// UI Kit
+// ====================================
+// These styles will be project specific, used to set specific styles on
+// more generic elements / classes.
+
+// Root -------------------------------
+
+$nav-height: 50px;
+$cms-toolbar-expanded-height: 46px;
+
+.cms-toolbar-expanded {
+    .body--ui-kit {
+        padding-top: $cms-toolbar-expanded-height;
+    }
+}
+
+.body--ui-kit {
+    color: $ui-foreground-color;
+    background-color: $ui-background-color;
+}
+
+.main--ui-kit {
+    padding-top: $nav-height;
+}
+
+// UI Kit Navigation ------------------
+
+.cms-toolbar-expanded {
+    .navbar {
+        margin-top: $cms-toolbar-expanded-height;
+    }
+}
+
+// Color Swatches ---------------------
+
+@include create-ui-swatch("white", $white, $outline: true);
+@include create-ui-swatch("black", $black);
+
+// Fontsets ---------------------------
+
+.ui-fontset--sans_regular {
+    font-family: sans-serif !important;
+}
+
+.ui-fontset--sans_bold {
+    @extend .ui-fontset--sans_regular;
+    font-weight: bold;
+}
+
+.ui-fontset--sans_thin {
+    @extend .ui-fontset--sans_regular;
+    font-weight: 100;
+}

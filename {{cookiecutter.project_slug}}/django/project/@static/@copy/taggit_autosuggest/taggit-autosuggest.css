@@ -1,0 +1,64 @@
+/* ------------------------------------
+// TAGGIT AUTOSUGGEST STYLES
+------------------------------------ */
+
+/**
+ * Notes:
+ *     - Using custom CSS to match djangoCMS stylesheet
+ *
+ * See:
+ *     - Source: https://bitbucket.org/fabian/django-taggit-autosuggest/raw/95524550919dab33d5903ab108d8b18fc2a6b174/taggit_autosuggest/static/jquery-autosuggest/css/autoSuggest.css
+ */
+
+/* add .field_ classes here if your fields
+   are named something other than "tags" */
+.field-tags ul.as-selections.vTextField {
+    margin-left: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0;
+    border: 0;
+}
+
+#as-original-id_tags__tagautosuggest {
+    padding: 0;
+}
+
+.as-selection-item {
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-right: 5px;
+}
+
+.field-tags .as-results ul.as-list {
+    box-sizing: border-box;
+    margin-left: 0;
+    margin-top: -1px;
+    border-color: #ddd !important;
+    padding: 10px;
+    width: 300px;
+}
+
+.field-tags .as-results ul.as-list li {
+    border: 0;
+    padding: 0.5em 0;
+    cursor: pointer;
+}
+
+.field-tags a.as-close {
+    padding: 0 5px 0 5px;
+    background: transparent;
+    cursor: pointer;
+    margin-left: -5px;
+}
+
+.colM .field-tags ul:not(.object-tools) li {
+    border-top: 0;
+}
+
+.field-tags li.as-selection-item {
+    /* NOTE: !importants */
+    border: 1px solid #ccc !important;
+    padding: 5px 11px 5px 5px !important;
+    border-radius: 5px;
+}

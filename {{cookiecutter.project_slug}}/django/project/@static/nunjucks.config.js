@@ -39,5 +39,4 @@ module.exports = function(env) {
 
     // Configure nunjucks here.
 }
-
 {% endraw %}

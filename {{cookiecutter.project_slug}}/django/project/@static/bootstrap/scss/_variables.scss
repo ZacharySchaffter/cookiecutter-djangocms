@@ -1,0 +1,29 @@
+// ------------------------------------
+// BOOTSTRAP VARIABLES (Overrides)
+// ------------------------------------
+// Set bootstrap config.
+
+
+$border-radius: 0px;
+$border-radius-lg: 0px;
+$border-radius-sm: 0px;
+
+$font-family-sans-serif: sans-serif;
+$font-family-serif: serif;
+$font-family-monospace: monospace;
+
+// ~10px when browser base font-size is 16px
+$spacer: 0.625rem;
+$spacers: (
+    0: 0,
+    1: ($spacer * 0.5),                 // ~5px
+    2: ($spacer * 1),                   // ~10px
+    3: ($spacer * 1.5),                 // ~15px
+    4: ($spacer * 2),                   // ~20px
+    5: ($spacer * 2.5),                 // ~25px
+    6: ($spacer * 3),                   // ~30px
+    7: ($spacer * 3.5),                 // ~35px
+    8: ($spacer * 4),                   // ~40px
+    9: ($spacer * 4.5),                 // ~45px
+    10: ($spacer * 5),                  // ~50px
+)

@@ -1,0 +1,25 @@
+[MESSAGES CONTROL]
+
+# Enable the message, report, category or checker with the given id(s). You can
+# either give multiple identifier separated by comma (,) or put this option
+# multiple time.
+#enable=
+
+# Disable the message, report, category or checker with the given id(s). You
+# can either give multiple identifier separated by comma (,) or put this option
+# multiple time (only on the command line, not in the configuration file where
+# it should appear only once).
+
+# R0903: Too few public methods
+# R0901: Too many ancestors
+# C0111: Missing class docstring
+# W0611: Unused import
+# C0411: Third party import order
+# C0103: Constant naming does not follow UPPERCASE convention
+# W0703: Catching too general an exception
+disable=R0903,R0901,C0111,W0611,C0411,C0103,W0703
+
+[FORMAT]
+
+# Maximum number of characters on a single line.
+max-line-length=99

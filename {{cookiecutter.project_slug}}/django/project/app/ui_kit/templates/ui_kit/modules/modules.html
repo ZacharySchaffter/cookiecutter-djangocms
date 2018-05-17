@@ -1,0 +1,29 @@
+{% raw %}
+
+{% comment %}
+NOTES:
+    * Mock data, especially data loaded through json_loads
+    is for low-fidelity prototype / demo purposes only
+    and _not intended for production_.
+{% endcomment %}
+
+<section class="my-10 py-5">
+    <header class="container">
+        <a class="ui-a--jump" name="modules"></a>
+        <h1 class="ui-h">Modules</h1>
+        <p class="ui-p">Modules combine basic elements into more complex objects. The following should include all visual and interactive states; e.g., responsive breakpoints, active / inactive, javascript based interactivity, etc.</p>
+    </header>
+    <hr>
+
+    <div class="container">
+        <h2 class="ui-h my-6">Site Navigation</h2>
+    </div>
+    {% include "ui/navigation/navigation.html" %}
+
+    <div class="container">
+        <h2 class="ui-h my-6">Site Footer</h2>
+    </div>
+    {% include "ui/footer/footer.html" %}
+
+</section>
+{% endraw %}

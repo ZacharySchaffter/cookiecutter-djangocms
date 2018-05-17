@@ -98,6 +98,8 @@ INSTALLED_APPS = (
     "django.contrib.gis",
     "django.contrib.gis.geoip",
     {% endif %}
+    "taggit",
+    "taggit_autosuggest",
     "cms",
     "menus",
     "sekizai",
@@ -113,14 +115,14 @@ INSTALLED_APPS = (
     "cmsplugin_filer_image",
     "cmsplugin_filer_utils",
     "meta",
-    "app.web",
     "django_extensions",
     "crispy_forms",
     "rest_framework",
     "rest_framework.authtoken",
-    {% if cookiecutter.use_uploadcare.lower() == "y" %}
-    "pyuploadcare.dj",
-    {% endif %}
+    {% if cookiecutter.use_uploadcare.lower() == "y" %}"pyuploadcare.dj",{% endif %}
+    "app.web",
+    "app.ui",
+    "app.ui_kit",
 )
 
 # Middleware

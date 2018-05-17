@@ -97,7 +97,7 @@ def django_envfile():
 def django_install():
     """Install Python dependencies."""
     shell(
-        f"docker exec -it {PROJECT_SLUG}_django pipenv install --skip-lock -r requirements/local.txt")
+        f"docker exec -it {PROJECT_SLUG}_django pip install -r requirements/local.txt")
 
 
 @django.command(name="shell")
@@ -110,7 +110,7 @@ def django_shell():
 def django_reset_db():
     """Reset Django/Postgres database."""
     shell(
-        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py reset_db --noinput")
+        f"docker exec -it {PROJECT_SLUG}_django python manage.py reset_db --noinput")
 
 {% if cookiecutter.use_geo.lower() == "y" %}
 @django.command(name="reset_postgis")
@@ -124,14 +124,22 @@ def django_reset_postgis():
 def django_migrate():
     """Run Django migrations."""
     shell(
-        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py migrate")
+        f"docker exec -it {PROJECT_SLUG}_django python manage.py migrate")
 
+@django.command(name="make_migrations")
+@click.option('--app', default=None, help='The app to migrate')
+@click.option('--empty', is_flag=True, default=False, help='Is empty?')
+def django_make_migrations(app, empty):
+    """Run Django migrations."""
+    app = '' if app is None else ' \"' + app + '\"'
+    shell(
+        f"docker exec -it {PROJECT_SLUG}_django python manage.py makemigrations{app}{ ' --empty' if empty else ''}")
 
 @django.command(name="create_super_user")
 def django_create_super_user():
     """Create a default super user."""
     shell(
-        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py createsuperuser")
+        f"docker exec -it {PROJECT_SLUG}_django python manage.py createsuperuser")
 
 
 @django.command(name="po")
@@ -158,9 +166,9 @@ def _create_locale_dir(app):
 
 def _create_po_files(lang):
     shell(
-        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py makemessages -l {lang}")
+        f"docker exec -it {PROJECT_SLUG}_django python manage.py makemessages -l {lang}")
     shell(
-        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py makemessages -d djangojs --ignore project/\@static/node_modules/ -e ts -l {lang}")
+        f"docker exec -it {PROJECT_SLUG}_django python manage.py makemessages -d djangojs --ignore project/\@static/node_modules/ -e ts -l {lang}")
 
 
 
@@ -168,14 +176,14 @@ def _create_po_files(lang):
 def django_mo():
     """Compile .mo files."""
     shell(
-        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py compilemessages")
+        f"docker exec -it {PROJECT_SLUG}_django python manage.py compilemessages")
 
 
 @django.command(name="serve")
 def django_serve():
     """Run Django dev server."""
     shell(
-        f"docker exec -it {PROJECT_SLUG}_django pipenv run python manage.py runserver 0.0.0.0:8000")
+        f"docker exec -it {PROJECT_SLUG}_django python manage.py runserver 0.0.0.0:8000")
 
 
 @django.command(name="test")

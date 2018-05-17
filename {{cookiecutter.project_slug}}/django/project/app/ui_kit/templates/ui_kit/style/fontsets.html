@@ -1,0 +1,31 @@
+{% raw %}
+<div class="container">
+    <h2 class="ui-h my-6">Fontsets</h2>
+    <div class="row">
+        <div class="col-lg-6">
+            <h3 class="ui-h my-6">System Sans Thin</h3>
+            {% include "ui_kit/style/fontset.html" with name="sans_thin" %}
+        </div>
+        <div class="col-lg-6">
+                <h3 class="ui-h my-6">System Sans Thin (Reverse)</h3>
+                {% include "ui_kit/style/fontset.html" with name="sans_thin" extra_class="ui--reverse ui-text--reverse" %}
+            </div>
+        <div class="col-lg-6">
+            <h3 class="ui-h my-6">System Sans Regular</h3>
+            {% include "ui_kit/style/fontset.html" with name="sans_regular" %}
+        </div>
+        <div class="col-lg-6">
+                <h3 class="ui-h my-6">System Sans Regular (Reverse)</h3>
+                {% include "ui_kit/style/fontset.html" with name="sans_regular" extra_class="ui--reverse ui-text--reverse" %}
+            </div>
+        <div class="col-lg-6">
+            <h3 class="ui-h my-6">System Sans Bold</h3>
+            {% include "ui_kit/style/fontset.html" with name="sans_bold" %}
+        </div>
+        <div class="col-lg-6">
+                <h3 class="ui-h my-6">System Sans Bold (Reverse)</h3>
+                {% include "ui_kit/style/fontset.html" with name="sans_bold" extra_class="ui--reverse ui-text--reverse" %}
+            </div>
+    </div>
+</div>
+{% endraw %}

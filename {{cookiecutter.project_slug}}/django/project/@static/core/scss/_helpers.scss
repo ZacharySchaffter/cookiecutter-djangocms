@@ -1,0 +1,12 @@
+// ------------------------------------
+// BASE HELPERS
+// ------------------------------------
+// Common utility classes, this file _can generate css_.
+
+/**
+ * Alt. for .img-fluid
+*/
+.img--responsive {
+    height: auto;
+    width: 100%;
+}

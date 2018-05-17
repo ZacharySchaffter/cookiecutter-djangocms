@@ -1,0 +1,10 @@
+// ------------------------------------
+// STYLES UI KIT
+// ------------------------------------
+
+// All entrypoints should import the following:
+@import "./imports";
+
+// Only import styles you want in the .css version of this file.
+@import "../../ui_kit/scss/imports";
+@import "../../ui_kit/scss/styles";

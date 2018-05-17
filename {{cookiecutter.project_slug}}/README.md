@@ -25,10 +25,14 @@
 
 ## Setup
 
+Follow the instructions in [Python Setup](./docs/python_setup.md) if you've never setup your machine for virtualized, local Python/Django development.
+
+> Hint: Follow steps in "Terminal session 1" first.
+
 Terminal session 1:
 ```bash
 # Setup virtual environment
-pipenv install -r requirements/dev.txt
+pipenv install
 pipenv shell
 
 # Start local dev
@@ -46,6 +50,12 @@ pipenv shell
 # Compile/watch static assets
 klak watch
 ```
+
+{% if cookiecutter.use_heroku.lower() == "y" %}
+Terminal session 3:
+1. Follow: [Heroku:Add Remotes](#add-remotes)
+2. Follow: [Heroku:Download/Import Remote Data](#download-import-remote-data)
+{% endif %}
 
 > [View Site](http://localhost:8000)
 

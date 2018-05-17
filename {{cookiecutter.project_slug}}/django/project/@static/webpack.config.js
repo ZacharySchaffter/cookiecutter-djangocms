@@ -3,7 +3,7 @@ var path = require("path");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var BundleTracker = require("webpack-bundle-tracker");
 var CopyWebpackPlugin = require('copy-webpack-plugin');
-
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
 /**
  * Webpack Docs:
@@ -17,9 +17,9 @@ var publicPath = '/static/';
 var config = {
     context: path.resolve(__dirname),
     entry: {
-        "js/common": "common/index.js",
-        "js/ui-kit": "ui-kit/index.js",
-        "css/styles": "styles.scss",
+        "js/common": "entry_points/js/index.js",
+        "css/styles": "entry_points/scss/styles.scss",
+        "css/ui_kit": "entry_points/scss/styles_ui_kit.scss",
     },
     output: {
         path: path.resolve(__dirname, "../static"),
@@ -33,7 +33,6 @@ var config = {
             filename: "js/common.js"
         }),
         new ExtractTextPlugin({ filename: "[name].css" }),
-        new BundleTracker({ filename: "../../webpack-stats.json" }),
         new webpack.ProvidePlugin({
             "fetch": "imports?this=>global!exports?global.fetch!whatwg-fetch",
             "Promise": "bluebird",
@@ -42,8 +41,26 @@ var config = {
         }),
         // SEE: https://github.com/kevlened/copy-webpack-plugin
         new CopyWebpackPlugin([
-            // { "from": "@copy/path/to/file.ext", "to": "path/to/file.ext"},
+            // "to" scope starts in static/
+            // { "from": "@copy/path/to/file.ext", "to": "desired/path/to/file.ext"},
+            { "from": "@copy/taggit_autosuggest/taggit-autosuggest.css", "to": "css/taggit-autosuggest.css" },
+            { "from": "@copy/taggit_autosuggest/taggit-autosuggest.js", "to": "js/jquery.autoSuggest.minified.js" },
         ]),
+        // TODO: maybe pass browser sync as a flag/option
+        new BrowserSyncPlugin({
+            host: "localhost",
+            port: 8001,
+            proxy: "127.0.0.1:8000",
+            files: [
+                "./static/css/*.css",
+                "./static/js/*.js",
+                "../app/ui/templates/ui/**/*.html",
+                "../app/ui_kit/templates/ui_kit/**/*.html",
+                "../app/ui_kit/templates/ui_kit/**/*.html"
+            ],
+            reloadDelay:300,
+            reloadDebounce: 500
+        })
     ],
     module: {
         rules: [
@@ -74,9 +91,6 @@ var config = {
             },
             {
                 test: /\.(png|gif|jpe?g|svg)$/i,
-                exclude: [
-                    path.resolve(__dirname, "node_modules")
-                ],
                 use: [
                     {
                         loader: "file-loader",
@@ -87,7 +101,7 @@ var config = {
                 ]
             },
             {
-                test: /\.(woff2?|eot|ttf|svg)(\?\S*)?$/,
+                test: /\.(woff2?|eot|ttf)(\?\S*)?$/,
                 exclude: [],
                 use: [
                     {
@@ -116,10 +130,11 @@ var config = {
         alias: {
             "webworkify": "webworkify-webpack",
             "bootstrap_scss": "bootstrap/scss",
+            "chosen": "chosen-js",
             "breakpoint": "breakpoint-sass/stylesheets",
             "bourbon": "bourbon/core",
         },
-        modules: ["node_modules", "js", "scss",]
+        modules: ["node_modules", "js", "scss", "./"]
     }
 
 }
