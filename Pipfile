@@ -1,28 +1,21 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 cookiecutter = "==1.6.0"
-pytest = "*"
-mypy = "*"
-"flake8" = "*"
-"pep8" = "*"
-pydocstyle = "*"
-"autopep8" = "*"
-pylint = "*"
-klak = "*"
-"path.py" = "*"
-
+pytest = "==4.0.0"
+mypy = "==0.641"
+"flake8" = "==3.6.0"
+"pep8" = "==1.7.1"
+pydocstyle = "==3.0.0"
+"autopep8" = "==1.4.3"
+pylint = "==2.1.1"
+klak = "==0.3.3"
+"path.py" = "==11.5.0"
 
 [dev-packages]
 
-
-
 [requires]
-
 python_version = "3.6"
