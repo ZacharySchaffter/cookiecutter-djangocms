@@ -1,4 +1,15 @@
+# --------------------------------------
+# Development Requirements
+# --------------------------------------
+# NOTE: Run this file to:
+#       - Fill up a virtualenv or .venv to enable IDE autocomplete
+#       - Enable local project automation
+
+# IDE Support
+# --------------------------------------
 -r ../django/requirements/local.txt
 
-klak
-path.py
+# Automation
+# --------------------------------------
+klak==0.2.4
+path.py==11.5.0
