@@ -95,7 +95,6 @@ def ensure_git_repo(project_directory):
 
     if is_repo and not is_repo_root:
         print("Warning: Output dir is inside another git working tree!")
-        print("Info: If you are using the template `make build` command testing locally you can ignore this warning.")
         init_git_repo()
 
     elif not is_repo:
