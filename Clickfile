@@ -1,36 +1,50 @@
 """Cookiecutter Django Clickfile."""
 
+import sys
 import os
 import subprocess
-from klak.cli import root
-from klak.utils import run, shell
 import click
+from contextlib import contextmanager
+from klak.cli import root
 from path import Path
+
+# Utils
+# =====================================
+
+def run(command, **run_kwargs):
+    run_kwargs_defaults = {"shell": True, "check": True}
+    kwargs = {**run_kwargs_defaults, **run_kwargs}
+
+    try:
+        return subprocess.run(command, **kwargs)
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True)
+        if not click.confirm("Continue?"):
+            sys.exit(1)
 
 
 # Cookiecutter Commands
 # =====================================
 
 
-@root.group()
+@root.group(name="cc")
 def cookiecutter():
     """Cookiecutter commands."""
     pass
 
 @cookiecutter.command(name="bake")
-@click.option(
-    "-o", "--output_dir", required=True, help="The template output directory.")
+@click.option("-o", "--output_dir", default="build", help="Output dir.")
 def cookiecutter_bake(output_dir):
-    """Output this template for manual testing."""
+    """Ouput template into OUTPUT_DIR for testing."""
+    cwd = Path(os.getcwd())
     path = Path(output_dir)
 
     if not path.isdir():
-        raise click.UsageError("--output_dir must be a directory.")
+        raise click.UsageError(f"UsageError: {output_dir} not found.")
+    if path.realpath() == cwd.realpath():
+        raise click.UsageError(f"UsageError: Please chose a another directory.")
 
-    realpath = path.realpath()
-
-    shell(
-        f"cookiecutter -o {realpath} ./", stderr=subprocess.PIPE)
+    run(f"cookiecutter -o {path.realpath()} ./")
 
 
 # Test Commands
@@ -45,4 +59,4 @@ def test():
 @test.command(name="python")
 def test_python():
     """Run Python test suite."""
-    shell("py.test")
+    run("py.test")
