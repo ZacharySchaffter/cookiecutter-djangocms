@@ -33,16 +33,17 @@ __See available commands:__
 
 ```bash
 klak --help
+klak cc --help
+klak test --help
 ```
 
 __"Bake" a local copy of this template:__
 
 ```bash
-# It's recommended to direct this command at a dir
-# that is _not_ this project's dir.
-klak cookiecutter bake -o /path/to/bake/dir
+# NOTE: -o must be a dir that is _not_ the project dir.
+klak cc bake -o /path/to/bake/dir
 
-# Follow prompts.
+# Follow prompts...
 
 # In another session (recommended)
 cd /path/to/bake/dir
