@@ -40,12 +40,13 @@ EOT
 command_import_dumpfile() {
     local dumpfile_path="${1}"
     local db_name="djangodb"
+    local db_user="djangodb"
 
     echo "Attempting to import ${dumpfile_path} into ${db_name}..."
 
-    dropdb "${db_name}"
-    createdb "${db_name}"
-    pg_restore -v --no-owner -d "${db_name}" "${dumpfile_path}"
+    dropdb -U "${db_user}" "${db_name}"
+    createdb -U "${db_user}" "${db_name}"
+    pg_restore -v --no-owner -U "${db_user}" -d "${db_name}" "${dumpfile_path}"
 
     echo "Complete!!!"
 }

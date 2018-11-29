@@ -9,11 +9,6 @@ from .base import *
 # Django Setup
 # =====================================
 
-ALLOWED_HOSTS += ("docker.local", ".ngrok.io",)
-
-SECRET_KEY = env(
-    "SECRET_KEY", default="CHANGEME!!")
-
 # Installed Apps
 # =====================================
 
