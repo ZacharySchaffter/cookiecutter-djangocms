@@ -297,9 +297,9 @@ def heroku_destroy(heroku_slug, heroku_remote):
 @click.option("--secure_ssl_redirect", prompt=True, default=True)
 @click.option("--session_cookie_secure", prompt=True, default=True)
 @click.option("--crsf_cookie_secure", prompt=True, default=True)
-@click.option("--cms_plugin_cache", prompt=True, default=False)
-@click.option("--cms_placeholder_cache", prompt=True, default=False)
-@click.option("--cms_page_cache", prompt=True, default=False)
+@click.option("--cms_plugin_cache", prompt=True, default=True)
+@click.option("--cms_placeholder_cache", prompt=True, default=True)
+@click.option("--cms_page_cache", prompt=True, default=True)
 @click.option("--uploadcare_pub_key", prompt=True, default="demopublickey")
 @click.option("--uploadcare_secret_key", prompt=True, default="demoprivatekey")
 def heroku_configure(heroku_slug, heroku_remote, *args, **kwargs):
