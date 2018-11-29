@@ -3,7 +3,7 @@
 # -------------------------------------
 -r base.txt
 
-gevent==1.2.2
+gevent==1.3.7
 {% if cookiecutter.use_geo.lower() == "n" %}
 django-postgrespool==0.3.1
 {% endif %}
