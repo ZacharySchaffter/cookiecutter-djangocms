@@ -83,7 +83,7 @@ CRSF_COOKIE_SECURE = env.bool("CRSF_COOKIE_SECURE", True)
 
 SECRET_KEY = env("SECRET_KEY")
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default="localhost,")
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", ])
 
 # Installed Apps
 # =====================================

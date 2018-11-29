@@ -290,8 +290,8 @@ def heroku_destroy(heroku_slug, heroku_remote):
 @click.option("--debug", prompt=True, default="False")
 @click.option("--log-level", prompt=True, default="ERROR")
 @click.option(
-    "--allowed_hosts", prompt=True, default=".herokuapp.com",
-    help="Format: '.domain1.com,.domain2.com' ")
+    "--allowed_hosts", prompt=True, default=".herokuapp.com,",
+    help="Format: .domain1.com,.domain2.com")
 @click.option("--secret_key", prompt=True, required=True)
 @click.option("--use_https_for_assets", prompt=True, default=True)
 @click.option("--secure_ssl_redirect", prompt=True, default=True)
