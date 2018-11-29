@@ -59,21 +59,31 @@ ROOT_URLCONF = "app.config.urls"
 
 DEBUG = env.bool("DEBUG", False)
 
-ALLOWED_HOSTS = ("localhost", "127.0.0.1",)
-
 DEFAULT_SITE_ID = SITE_ID = 1
 
-SITE_NAME = env("SITE_NAME", default="example.com")
+# NOTE: This setting is only consumed once to create the initial "Site" instance.
+#       You can update this in the admin.
+SITE_NAME = "example.com"
 
-ADMINS = (
-    ("app admin"),
-)
+ADMINS = ()
 
 MANAGERS = ADMINS
 
 FIXTURE_DIRS = (
     PROJECT_PATH("fixtures"),
 )
+
+SECURE_PROXY_SSL_HEADER = env.bool("SECURE_PROXY_SSL_HEADER", True)
+
+SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", True)
+
+SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", True)
+
+CRSF_COOKIE_SECURE = env.bool("CRSF_COOKIE_SECURE", True)
+
+SECRET_KEY = env("SECRET_KEY")
+
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default="localhost,")
 
 # Installed Apps
 # =====================================

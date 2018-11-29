@@ -6,13 +6,6 @@ from .base import *
 # DJANGO CONFIGURATION
 # -------------------------------------
 
-# Django Setup
-# =====================================
-
-ALLOWED_HOSTS += (".herokuapp.com",)
-
-SECRET_KEY = env("SECRET_KEY")
-
 # Installed Apps
 # =====================================
 
