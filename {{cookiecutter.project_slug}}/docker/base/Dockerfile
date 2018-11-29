@@ -3,7 +3,7 @@
 # -------------------------------------
 # Create a container appropriate for Django and Django-Geo
 
-FROM python:3
+FROM python:3.6
 
 # Update and install system dependencies
 # Django-Geo Libs: binutils, libproj-dev, gdal-bin, libgeoip1, python-gdal
