@@ -291,6 +291,9 @@ def heroku_destroy(heroku_slug, heroku_remote):
 @click.option("--log-level", prompt=True, default="ERROR")
 @click.option("--secret_key", prompt=True, required=True)
 @click.option("--use_https_for_assets", prompt=True, default=True)
+@click.option("--cms_plugin_cache", prompt=True, default=False)
+@click.option("--cms_placeholder_cache", prompt=True, default=False)
+@click.option("--cms_page_cache", prompt=True, default=False)
 @click.option("--uploadcare_pub_key", prompt=True, default="demopublickey")
 @click.option("--uploadcare_secret_key", prompt=True, default="demoprivatekey")
 def heroku_configure(heroku_slug, heroku_remote, *args, **kwargs):
