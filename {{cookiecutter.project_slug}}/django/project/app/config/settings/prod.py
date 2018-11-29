@@ -37,7 +37,7 @@ DATABASE_POOL_ARGS = {
 # Staticfiles
 # =====================================
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Logging
 # =====================================
