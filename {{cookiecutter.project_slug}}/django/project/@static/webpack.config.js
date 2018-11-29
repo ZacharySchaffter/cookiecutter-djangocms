@@ -1,7 +1,6 @@
 var webpack = require("webpack");
 var path = require("path");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var BundleTracker = require("webpack-bundle-tracker");
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
@@ -35,7 +34,6 @@ var config = {
         new ExtractTextPlugin({ filename: "[name].css" }),
         new webpack.ProvidePlugin({
             "fetch": "imports?this=>global!exports?global.fetch!whatwg-fetch",
-            "Promise": "bluebird",
             "$": "jquery",              // bootstrap.js support
             "jQuery": "jquery",         // bootstrap.js support
         }),
@@ -45,6 +43,8 @@ var config = {
             // { "from": "@copy/path/to/file.ext", "to": "desired/path/to/file.ext"},
             { "from": "@copy/taggit_autosuggest/taggit-autosuggest.css", "to": "css/taggit-autosuggest.css" },
             { "from": "@copy/taggit_autosuggest/taggit-autosuggest.js", "to": "js/jquery.autoSuggest.minified.js" },
+            { "from": "@copy/djangocms/djangocms-admin-overrides.css", "to": "css/djangocms-admin-overrides.css" },
+            { "from": "@copy/imgs/", "to": "imgs/" },
         ]),
         // TODO: maybe pass browser sync as a flag/option
         new BrowserSyncPlugin({
@@ -54,6 +54,7 @@ var config = {
             files: [
                 "./static/css/*.css",
                 "./static/js/*.js",
+                "../app/**/templates/**/*.html",
                 "../app/ui/templates/ui/**/*.html",
                 "../app/ui_kit/templates/ui_kit/**/*.html",
                 "../app/ui_kit/templates/ui_kit/**/*.html"
@@ -85,11 +86,6 @@ var config = {
                 })
             },
             {
-                test: /\.tsx?/,
-                exclude: /node_modules/,
-                use: "ts-loader"
-            },
-            {
                 test: /\.(png|gif|jpe?g|svg)$/i,
                 use: [
                     {
@@ -112,16 +108,6 @@ var config = {
                     }
                 ]
             },
-            {
-                test: /\.(njk|nunjucks)$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: "nunjucks-loader",
-                    options: {
-                        config: path.resolve(__dirname, "nunjucks.config.js")
-                    }
-                }
-            }
         ]
     },
     devtool: "source-map",
