@@ -1,67 +1,107 @@
 # Contributing
 
-> _This project accepts changes from pull requests only!_
+## Purpose
 
-## Docs
+The purpose of this document is to establish a base styleguide for contributing to this project.
 
-- [Fork A Repo, GitHub Documentation](https://help.github.com/articles/fork-a-repo/)
+## Submitting Changes
 
-## Zen
+Changes (typically) must be submitted through GitHub's Pull Request (PR) workflow.
 
-- Don't commit changes to origin/dev or your local copy of dev
-- Create topic branches
-- Commit often
-- Write high-quality commit messages
-- `git fetch --all` and `git rebase upstream/dev` before pr submission
-- Run tests before submission
-- Limit commit header lines to 80 characters
-- Always include a type, scope, & subject
-- Subjects should use the imperative tense; "Change, Fix, Remove" in lieu of "Changed, Fixed, Removed" or "Changes, Fixes, Removes".
-- Include body text if more information is helpful.
+[See the GitHub Documentation for More Info.](https://help.github.com/articles/creating-a-pull-request/#creating-the-pull-request)
 
-## Style
+## Git
 
-Each commit message consists of a header (comprised of a type scope and subject) and a body (optional).
+### Branching Style
+
+The exact branching model used may vary per project, but in general please follow this convention:
 
 ```bash
-# Note: This comment, and those that follow should not be 
-# included in any commit.
-
-# Header:
-# Types are, feature, refactor, fix, chore
-# Scope describes what the change affects.
-# Subject succinctly describes the change.
-<type>(<scope>): <subject>
-
-# Body provides more info when it's helpful to do so.
-<body>
+# BRANCH_TYPE
+# / (forward slash)
+# BRANCH_NAME
+BRANCH_TYPE/BRANCH_NAME
 ```
+
+__For Example__:
+
+```bash
+feature/homepage
+```
+
+When branching for a feature, bugfix or any other feature tied directly to a ticket (in JIRA for example) add use an "__issue__" branch type the __ticket number__ for the branch name.
+
+__For Example__:
+
+```bash
+# NOTE: Do not include the ticket summary in the branch name
+issue/PROJ-123
+```
+
+### Commit Message Style
+
+Git commit messages usually come in 2 parts: The subject line and the body.
+
+- Subject lines are required
+- Bodies are optional but can be helpful to explain additional detail behind a particular commit.
+
+__Style__:
+
+- Separate the _subject_ from the _body_ with a blank line
+- Limit _subject_ to 50 characters
+- Subject should supply useful information
+- Use sentence case<sup>[1](#footnote-1)</sup> for the _subject_
+- _Do not_ end the _subject_ with a period
+- Use imperative mood<sup>[2](#footnote-2)</sup> for the _subject_
+- Wrap the _body_ at 72 characters
+- Use the _body_ to explain what and _why vs. how_
 
 __Examples__:
 
+```bash
+# Bad
+# ---
+#   - "added" is _not_ in the imperative mood
+#   - Subject is wordy and more than 50 characters
+#   - Does not use correct casing
+#   - Adds a period at the end
+added homepage carousel and worked out default config and init scripts.
+
+# Bad
+# ---
+#   - Subject is too brief and doesn't provide any useful info
+#   - Does not use correct casing
+fixes
+
+# Other Examples to Avoid
+# -----------------------
+more fixes
+fixed typo
+stuff
+
+# Good
+# ----
+#   - "Add" is in the imperative mood
+#   - Subject is concise and informative and is less than 50 characters
+#   - Uses correct casing
+#   - Does _not_ add period at the end.
+Add homepage carousel
+
+# Good
+# ----
+#   - Follows subject styleguide
+#   - A blank line separates subject and body
+#   - Body wraps around 72 characters.
+Replace GA with GTM
+
+GTM provides several advantages over traditional GA.
+All tracking tags can now be managed by the user
+without a developer from the GTM console.
+
 ```
-feature(auth): Enable single signon
 
-refactor(api): Require user token when accessing api/users
+---
 
-chore(docs): Update README.md
+<sup id="footnote-1">1</sup> <small>__Sentence case__: Sentence case is when you only capitalise the first letter of the  first word in a heading – like you would in a sentence.</small>
 
-fix(home page): Fix catastrophic bug when scrolling on IOS
-```
-
-### Types
-
-| Type | Desc |
-| :--  | :--  |
-| __feature__ | A commit related to a new feature.
-| __refactor__ | A commit that is not a feature but changes the meaning of existing code.
-| __fix__ | A commit that fixes a bug or issue.
-| __chore__ | A commit that _does not_ change the meaning of existing code; e.g. updating docs.
-
-### Scopes
-
-Scopes describe the area or feature the change affects. Deciding what to put here can be a bit fuzzy so here's some suggestions:
-
-- Use concise scope values.
-- Try to use consistent scope values between commits.
-- If the change is related to a QA ticket (e.g., PROJ-123) use the ticket number as the scope or part of the scope.
+<sup id="footnote-2">2</sup> <small>__Imperative mood__: The imperative mood is a verb form which makes a command or a request. For example: "Empty the bin, John." (the verb is in the imperative mood) versus "John empties the bin." (the verb is not in the imperative mood).</small>
