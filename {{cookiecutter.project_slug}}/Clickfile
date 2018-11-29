@@ -410,7 +410,7 @@ def heroku_add_remote(heroku_slug, heroku_remote):
     "-c", "--capture", is_flag=True, help="Capture new backup before downloading")
 def heroku_import_db(heroku_slug, heroku_remote, capture):
     """Import DB from HEROKU_SLUG-HEROKU_REMOTE."""
-    app_name = f"{heroku_slug}{heroku_remote}"
+    app_name = f"{heroku_slug}-{heroku_remote}"
     latest_dump = Path("./latest.dump")
     latest_dump.remove_p()
 
