@@ -1,5 +1,5 @@
 """
-Test 6 Project's Clickfile.
+{{cookiecutter.project_name}} Clickfile.
 
 Index:
 
@@ -23,8 +23,13 @@ from path import Path
 
 PROJECT_SLUG = "{{cookiecutter.project_slug}}"
 HEROKU_SLUG = "{{cookiecutter.heroku_slug}}"
+HEROKU_PROCESS_WORKERS = {
+    "dev": 2,
+    "prod": 5,
+}
 LOCALIZED_APPS = ("web", )
 LANGUAGES = ()
+DJANGO_BUILD_PATH = Path("./django/.build/")
 
 
 def _clean_stdout(output):
@@ -309,25 +314,48 @@ def heroku_configure(heroku_slug, heroku_remote, *args, **kwargs):
 @heroku.command(name="deploy")
 @click.argument("heroku_slug", nargs=1, default=HEROKU_SLUG)
 @click.option("-r", "--heroku_remote", required=True, help="The Heroku (Git) remote.")
+@click.option(
+    "-w", "--process_workers", help="The number of workers to deploy on this container")
 @click.pass_context
-def heroku_deploy(ctx, heroku_slug, heroku_remote):
+def heroku_deploy(ctx, heroku_slug, heroku_remote, process_workers):
     """Deploy HEROKU_SLUG-HEROKU_REMOTE app."""
+    if not process_workers:
+        try:
+            process_workers = HEROKU_PROCESS_WORKERS[heroku_remote]
+        except AttributeError:
+            raise click.UsageError("-w, --process_workers is required.")
+
     app_name = f"{heroku_slug}-{heroku_remote}"
     ctx.invoke(assets_build)
     heroku_docker_build_env(app_name)
-    heroku_docker_build(app_name)
-    heroku_docker_push(app_name)
-    herkou_docker_post_push(app_name)
+    heroku_container_deploy(app_name, process_workers)
+
+
+def heroku_container_deploy(app_name, process_workers):
+    """Deploy using `heroku container` commands."""
+
+    push_cmd = f"heroku container:push -a {app_name} web --arg WORKERS={process_workers},ASSET_VERSION={_asset_version()}"
+    release_cmd = f"heroku container:release web -a {app_name}"
+    migrate_cmd = f"heroku run python manage.py migrate -a {app_name}"
+    clear_cache_cmd = f"heroku run python manage.py clear_cache -a {app_name}"
+    createsuperuser_cmd = f"heroku run python manage.py createsuperuser -a {app_name}"
+
+    subprocess.run(push_cmd, check=True, shell=True)
+    subprocess.run(release_cmd, check=True, shell=True)
+    subprocess.run(migrate_cmd, check=True, shell=True)
+    subprocess.run(clear_cache_cmd, check=True, shell=True)
+    subprocess.run(createsuperuser_cmd, check=True, shell=True)
+
+    shutil.rmtree(DJANGO_BUILD_PATH.realpath())
 
 
 def heroku_docker_build_env(app_name):
     """Create Heroku deploy container .env."""
-    build_path = Path("./django/.build/")
-    env_path = os.path.join(build_path.realpath(), ".env")
+    env_path = os.path.join(DJANGO_BUILD_PATH.realpath(), ".env")
     secret_key = subprocess.check_output(
         f"heroku config:get SECRET_KEY -a {app_name}", shell=True)
 
-    build_path.mkdir_p()
+    DJANGO_BUILD_PATH.mkdir_p()
     env_path.remove_p()
     secret_key = _clean_stdout(secret_key)
 
@@ -336,30 +364,10 @@ def heroku_docker_build_env(app_name):
         env_file.write(f'SECRET_KEY="{secret_key}"\n')
 
 
-def heroku_docker_build(app_name):
-    """Build Heroku deploy container."""
-    shell(
-        f"docker build --build-arg ASSET_VERSION={_asset_version()} . -f docker/heroku/Dockerfile -t registry.heroku.com/{app_name}/web:latest"
-    )
-
-
 def _asset_version():
     """Get the current ASSET_VERSION."""
     asset_version = subprocess.check_output("git rev-parse HEAD", shell=True)
     return _clean_stdout(asset_version)
-
-
-def heroku_docker_push(app_name):
-    """Push latest Heroku deploy container."""
-    shell(f"docker push registry.heroku.com/{app_name}/web")
-
-
-def herkou_docker_post_push(app_name):
-    """Perform post-Heroku-push actions."""
-    build_path = Path("./django/.build/")
-    shell(f"heroku run -a {app_name} python manage.py migrate")
-    shell(f"heroku run -a {app_name} python manage.py createsuperuser")
-    shutil.rmtree(build_path.realpath())
 
 
 @heroku.command(name="init")
@@ -383,7 +391,7 @@ def heroku_cli_install():
 
 def heroku_plugins_install():
     """Install Heroku plugins."""
-    shell("heroku plugins:install heroku-container-registry")
+    shell("heroku plugins:install @heroku-cli/plugin-container-registry")
 
 
 @heroku.command(name="add_remote")

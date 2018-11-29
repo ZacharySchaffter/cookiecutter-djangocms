@@ -2,8 +2,8 @@
 # DOCKERFILE
 # -------------------------------------
 # Notes:
-#   * You must build {{cookiecutter.project_slug}}/web
-#    before building this image!
+#   * You must build sama_web/web before building this image!
+#   * This Dockerfile _must be at the project root_ to be compatible with Heroku Container CLI
 #
 # See:
 #   * Dockerfile Best Practices: https://goo.gl/ZQh6da

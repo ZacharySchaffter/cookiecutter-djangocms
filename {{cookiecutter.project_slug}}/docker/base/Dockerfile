@@ -17,3 +17,6 @@ RUN apt-get update -y && apt-get install -y \
     python3-gdal \{% endif %}
     gettext \
     libgettextpo-dev
+
+# Update and install Python dependencies
+RUN pip install -U pip
