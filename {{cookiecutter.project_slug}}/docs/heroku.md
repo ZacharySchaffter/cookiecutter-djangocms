@@ -21,6 +21,7 @@ This boilerplate can:
 * Create Heroku app(s)
 * Configure Heroku app(s)
 * Deploy Heroku app(s)
+* Import App Database
 
 ## Setup Heroku
 
@@ -37,22 +38,16 @@ __Notes__:
 * If the apps already exist, see [Add Existing App(s)](#add-existing-apps) instead.
 
 ```bash
-# Takes a (optional) positional <HEROKU_SLUG> arg (default: {{cookiecutter.heroku_slug}})
-# Takes a required option --heroku_remote | -r
+# NOTE: Uses default HEROKU_SLUG: {{cookiecutter.heroku_slug}})
+# NOTE: See `klak heroku create --help` for more info
 klak heroku create -r dev
 
-# Also:
-# Takes a (optional) positional <HEROKU_SLUG> arg (default: {{cookiecutter.heroku_slug}})
-# Takes a required option --heroku_remote | -r
+# Then...
+# NOTE: See `klak heroku configure --help` for more info
 klak heroku configure -r dev
-```
 
-## Add Existing App(s)
-
-```bash
-# Takes a (optional) positional <HEROKU_SLUG> arg (default: {{cookiecutter.heroku_slug}})
-# Takes a required option --heroku_remote | -r
-klak heroku add_remote -r dev
+# Then...
+# See "Deploy" below
 ```
 
 ## Deploy
@@ -63,12 +58,29 @@ __Notes__:
 * If the apps already exist, first see [Add Remotes](#add-remotes).
 
 ```bash
-# Takes a (optional) positional <HEROKU_SLUG> arg (default: {{cookiecutter.heroku_slug}})
-# Takes a required option --heroku_remote | -r
+# NOTE: Uses default HEROKU_SLUG: {{cookiecutter.heroku_slug}})
 klak heorku deploy -r dev
 
 # Optional: Open app in browser
 heroku open -r dev
+```
+
+## Add Existing App(s)
+
+```bash
+# NOTE: Uses default HEROKU_SLUG: {{cookiecutter.heroku_slug}})
+# NOTE: See `klak heroku create --help` for more info
+klak heroku add_remote -r dev
+```
+
+## Import App Database
+
+```bash
+# Notes:
+#   - You may need to `chmod +x heroku_restore_db.sh` first
+#   - Use the -c flag if you need an up to date copy of the db
+#   - See `klak heroku import_db --help` for more info
+klak heroku import_db -r dev
 ```
 
 ## Troubleshooting
