@@ -271,7 +271,7 @@ def heroku_create(heroku_slug, heroku_remote):
     """Create HEROKU_SLUG-HEROKU_REMOTE app."""
     app_name = f"{heroku_slug}-{heroku_remote}"
     shell(f"heroku create {app_name} -r {heroku_remote}")
-    shell("heroku addons:create heroku-postgresql:hobby-dev")
+    shell(f"heroku addons:create heroku-postgresql:hobby-dev -r {heroku_remote}")
 
 
 @heroku.command(name="destroy")
@@ -288,6 +288,7 @@ def heroku_destroy(heroku_slug, heroku_remote):
 @click.option("-r", "--heroku_remote", required=True, help="The Heroku (Git) remote.")
 @click.option("--django_settings_module", prompt=True, default="app.config.settings.prod")
 @click.option("--debug", prompt=True, default="False")
+@click.option("--log-level", prompt=True, default="ERROR")
 @click.option("--secret_key", prompt=True, required=True)
 @click.option("--use_https_for_assets", prompt=True, default=True)
 @click.option("--uploadcare_pub_key", prompt=True, default="demopublickey")
@@ -308,7 +309,7 @@ def heroku_configure(heroku_slug, heroku_remote, *args, **kwargs):
         config_value = str(value).strip()
         config_str += f'{config_key}={config_value} '
 
-    shell(f"heroku config:set {config_str}")
+    shell(f"heroku config:set {config_str} -r {heroku_remote}")
 
 
 @heroku.command(name="deploy")
