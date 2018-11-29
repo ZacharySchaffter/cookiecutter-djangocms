@@ -1,0 +1,88 @@
+/* ------------------------------------
+ * DJANGOCMS ADMIN CSS OVERRIDES
+ * Various (hopefully minor djangocms admin overrides.
+------------------------------------ */
+
+/* Bugfix: .field-box with .help
+ * Attempts to fix a bug in Djangocms Admin style that occurrs
+ * when default selectors fail to target .field-box
+ * when .help is the last element
+==================================== */
+form .form-row .field-box {
+    /*
+        REVISIT: Rule removal.
+            - Removed this rule because it breaks the layout when
+             fieldset are defined in groups,
+             e.g. `(("field_1", "field_2"), "field_3")`
+    */
+    /* width: 50%; */
+    box-sizing: border-box;
+    margin: 0 !important;
+}
+
+form .form-row .field-box+.field-box {
+    padding-left: 20px;
+}
+
+/* End Bugfix: .field-box with .help */
+
+
+/* Bugfix .field-box in a .cms-modal
+ * Attempts to fix a bug in Djangocms Admin style that occurrs
+ * When a .field-box appears inside a .cms-modal
+*/
+.cms-admin-modal .form-row .field-box {
+    margin-right: 0 !important;
+}
+
+/* Improve the look of the filter bar slightly */
+.change-list #changelist.filtered #changelist-filter {
+    /* TODO: Removed, causing bug when list view is empty */
+    /* border: 1px solid #DCDCDC;
+    padding: 10px;
+    margin-top: 47px;
+    margin-bottom: 47px; */
+}
+
+/* Improve apperance of error list */
+.form-row.errors .errorlist {
+    padding-left: 0;
+    margin-top: 0;
+}
+
+/* Improve fieldset appearance in related inlines */
+form fieldset.collapse h2,
+.djangocms-admin-style .inline-group .module h2 {
+    margin-bottom: 30px;
+}
+
+/* Remove padding-bottom from last .form-row */
+form .form-row:not(tr):last-of-type {
+    padding-bottom: 0;
+}
+
+
+/* Add some additional margin to #content .module, .module */
+#content .module, .module {
+    padding-bottom: 24px;
+}
+
+/* Fix inline, translated field inputs, that do not use vText class */
+.inline-group .module:not(.aligned) .form-row input {
+    width: 100% !important;
+}
+
+/* Special fix for Ordered Model move_up_down_links in OrderedStackedInline */
+[data-inline-type="stacked"] .form-row.field-move_up_down_links .readonly {
+    margin-left: 0;
+}
+
+/* Fix weird space for readonly fields */
+.aligned label + div.readonly {
+    margin-left: 0;
+}
+
+/* Fix weird negative margin on form .checkbox-row */
+form .checkbox-row {
+    margin-bottom: 0;
+}
