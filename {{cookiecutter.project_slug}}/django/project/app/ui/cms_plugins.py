@@ -1,34 +1,18 @@
 import logging
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
+from app.cms.cms_plugins import PluginAdmin as PluginAdminBase
 from . import models
 
 
 log = logging.getLogger(__name__)
 
 
-class UIAppBasePluginAdmin(CMSPluginBase):
+class PluginAdmin(PluginAdminBase):
     """
-    Base CMSPluginBase class.
+    Base plugin admin for this app.
 
-    This is an optional base plugin admin useful for
-    sharing common customizations.
-
-    Naming CMSPluginBase Subclasses:
-
-    The CMSPluginBase name is too easily confused with the backing
-    model base class for plugins, CMSPlugin. Since CMSPluginBase
-    is, in actuality, an extension of `django.admin.ModelAdmin`
-    anyway, we can follow a naming convention that
-    makes more sense:
-
-    ```
-    @plugin_pool.register_plugin
-    class FooPluginAdmin(UIAppBasePluginAdmin):
-        pass
-    ```
-
+    See:
+        - app.cms.cms_plugins.PluginAdmin for useage
     """
-
     module = _("UI")
-    name = _("Unnamed Plugin")
