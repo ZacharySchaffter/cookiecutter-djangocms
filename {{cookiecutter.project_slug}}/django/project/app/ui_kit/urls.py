@@ -6,6 +6,6 @@ from . import views
 urlpatterns = [
     url(r"^",
         TemplateView.as_view(template_name="ui_kit/index.html"),
-        name="ui-kit-index"
+        name="index"
     ),
 ]
