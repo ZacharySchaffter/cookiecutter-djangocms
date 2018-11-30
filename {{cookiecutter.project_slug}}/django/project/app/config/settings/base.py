@@ -98,7 +98,6 @@ INSTALLED_APPS = (
     "django.contrib.auth",
     "app.auth",
     "app.shared",
-    "app.utils",
     # NOTE: End of "Order matters..."
 
     "django.contrib.contenttypes",
@@ -135,6 +134,7 @@ INSTALLED_APPS = (
     "rest_framework",
     "rest_framework.authtoken",
     {% if cookiecutter.use_uploadcare.lower() == "y" %}"pyuploadcare.dj",{% endif %}
+    "app.cms",
     "app.web",
     "app.ui",
     "app.ui_kit",
@@ -155,7 +155,7 @@ MIDDLEWARE = (
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.cache.UpdateCacheMiddleware",
     "cms.middleware.utils.ApphookReloadMiddleware",
-    "app.utils.middleware.sites.CMSSiteMiddleware",
+    "app.cms.middleware.CMSSiteMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
