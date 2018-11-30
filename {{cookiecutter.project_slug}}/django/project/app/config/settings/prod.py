@@ -85,18 +85,3 @@ LOGGING = {
     }
 }
 
-# -------------------------------------
-# VENDOR CONFIGURATION
-# -------------------------------------
-
-# Utils
-# =====================================
-
-SLACK_USER_NAME = env("SLACK_USER_NAME", default="Logger:PROD")
-
-# Storages
-# =====================================
-
-AWS_HEADERS = {
-    "Cache-Control": "max-age=31536000",
-}

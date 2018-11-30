@@ -16,5 +16,6 @@ class Command(BaseCommand):
 
         if not exists:
             User.objects.create_superuser(email=email, password=password, full_name=full_name)
+            self.stdout.write(f"Created admin user, {email}.")
         else:
             self.stdout.write(f"Admin user with {email} exists, skipping...")
