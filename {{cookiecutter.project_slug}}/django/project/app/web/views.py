@@ -1,14 +1,8 @@
-from django.views.generic import TemplateView
-from django.utils.translation import ugettext as _
+import logging
 from django.shortcuts import render
 
 
-# class SampleView(TemplateView):
-#     template_name = "web/sample-view.html"
-
-#     def get_context_data(self, *args, **kwargs):
-#         context = super().get_context_data(*args, **kwargs)
-#         return context
+log = logging.getLogger(__name__)
 
 
 def bad_request(request):
