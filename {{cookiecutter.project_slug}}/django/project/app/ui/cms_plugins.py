@@ -1,7 +1,4 @@
 import logging
-from django import forms
-from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from . import models
