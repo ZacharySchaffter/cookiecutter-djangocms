@@ -1,7 +1,5 @@
-# from django.contrib import admin
-# from . import models
+import logging
+from django.contrib import admin
 
 
-# @admin.register(models.Sample)
-# class SampleAdmin(admin.ModelAdmin):
-#     pass
+log = logging.getLogger(__name__)

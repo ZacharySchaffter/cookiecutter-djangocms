@@ -1,3 +1,9 @@
+import logging
+
+
+log = logging.getLogger(__name__)
+
+
 def web_settings(request):
     from django.conf import settings
 

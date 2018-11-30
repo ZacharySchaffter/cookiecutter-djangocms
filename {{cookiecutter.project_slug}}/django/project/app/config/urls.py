@@ -11,10 +11,10 @@ from cms.sitemaps import CMSSitemap
 
 admin.autodiscover()
 
-handler400 = 'app.web.views.bad_request'
-handler403 = 'app.web.views.permission_denied'
-handler404 = 'app.web.views.page_not_found'
-handler500 = 'app.web.views.server_error'
+handler400 = "app.web.views.bad_request"
+handler403 = "app.web.views.permission_denied"
+handler404 = "app.web.views.page_not_found"
+handler500 = "app.web.views.server_error"
 
 # -------------------------------------
 # URLS CONFIG
@@ -25,7 +25,7 @@ js_catalog_packages = ("app.web", )
 
 urlpatterns = [
     # Enable set_language url
-    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r"^i18n/", include("django.conf.urls.i18n")),
     # Enable JS catalog
     url(
         r"jsi18n/$",
@@ -34,7 +34,8 @@ urlpatterns = [
     ),
     # Project Urls
     url(r"^admin/", include(admin.site.urls)),
-    url(r'^taggit_autosuggest/', include("taggit_autosuggest.urls")),
+    url(r"^taggit_autosuggest/", include("taggit_autosuggest.urls")),
+    url(r"^", include("django.contrib.auth.urls")),
     url(r"^", include("cms.urls")),
 ]
 
@@ -69,7 +70,7 @@ if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        url(r"^__debug__/", include(debug_toolbar.urls)),
     ] + urlpatterns
 
     # Serve media files when DEBUG=True
