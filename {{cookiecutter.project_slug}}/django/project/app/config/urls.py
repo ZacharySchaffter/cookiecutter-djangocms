@@ -35,7 +35,7 @@ urlpatterns = [
     # Project Urls
     url(r"^admin/", include(admin.site.urls)),
     url(r"^taggit_autosuggest/", include("taggit_autosuggest.urls")),
-    url(r"^", include("django.contrib.auth.urls"))
+    url(r"^", include("django.contrib.auth.urls")),
     url(r"^", include("cms.urls")),
 ]
 

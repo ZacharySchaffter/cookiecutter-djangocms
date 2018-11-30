@@ -93,9 +93,14 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", ])
 #   * https://goo.gl/55D52S
 
 INSTALLED_APPS = (
+    # NOTE: Order matters here
     "djangocms_admin_style",
-    "app.utils",
     "django.contrib.auth",
+    "app.auth",
+    "app.shared",
+    "app.utils",
+    # NOTE: End of "Order matters..."
+
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.sites",
@@ -264,7 +269,6 @@ LANGUAGE_CODE = "en"
 LANGUAGES = (
     ("en", "English"),
     # Add additional / change languages here
-    # ("de", "German")
 )
 
 LOCALE_PATHS = (
@@ -274,14 +278,26 @@ LOCALE_PATHS = (
 # Authentication
 # =====================================
 
-ACCOUNT_AUTHENTICATION_METHOD = "username"
+AUTH_USER_MODEL = "app_auth.User"
 
-ACCOUNT_EMAIL_REQUIRED = True
+LOGIN_REDIRECT_URL = "/"
 
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+LOGOUT_REDIRECT_URL = "/"
 
-ACCOUNT_ALLOW_REGISTRATION = env.bool(
-    "ACCOUNT_ALLOW_REGISTRATION", False)
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.BCryptPasswordHasher",
+]
+
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator", },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", },
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },
+]
 
 # Cache
 # =====================================
@@ -325,7 +341,6 @@ PARLER_LANGUAGES = {
     # See: https://goo.gl/Gs33Lm
     1: (
         {"code": "en", },
-        # {"code": "fr", },  // Temp. Remove fr from site
     ),
     "default": {
         "fallback": "en",
@@ -351,7 +366,7 @@ THUMBNAIL_PROCESSORS = (
 
 CMS_LANGUAGES = {
     "default": {
-        "fallbacks": ["en", "es", "fr"],
+        "fallbacks": ["en", ],
         "redirect_on_fallback": True,
         "public": True,
         "hide_untranslated": False,
@@ -364,7 +379,7 @@ CMS_TEMPLATES = (
     ('web/cms/default.html', 'Default Template'),
 )
 
-CMS_PERMISSION = True
+CMS_PERMISSION = False
 
 CMS_PLUGIN_CACHE = env.bool("CMS_PLUGIN_CACHE", False)
 
