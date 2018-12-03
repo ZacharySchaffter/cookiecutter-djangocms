@@ -389,36 +389,37 @@ CMS_PAGE_CACHE = env.bool("CMS_PAGE_CACHE", False)
 
 CMS_PLACEHOLDER_CONF = {}
 
-
-# DjangoCMS Meta
+# Django Meta / DjangoCMS Page Meta
 # =====================================
-# See: https://django-meta.readthedocs.io/en/latest/index.html
+# TODO: Update META_FB_PUBLISHER, META_TWITTER_SITE with actual urls
+# See:
+#   - https://django-meta.readthedocs.io/en/latest/index.html
+#   - https://github.com/nephila/django-meta/blob/develop/meta/settings.py
+#   - https://github.com/nephila/djangocms-page-meta
+#   - https://github.com/nephila/djangocms-page-meta/blob/develop/djangocms_page_meta/settings.py
 
 META_SITE_PROTOCOL = env("META_SITE_PROTOCOL", default="http")
 
 META_USE_SITES = True
 
+META_SITE_TYPE = "Website"
+
+META_SITE_NAME = "{{ cookiecutter.project_name }}"
+
 META_USE_OG_PROPERTIES = True
 
 META_USE_TWITTER_PROPERTIES = True
 
-META_USE_GOOGLEPLUS_PROPERTIES = True
+META_USE_TITLE_TAG = True
 
-META_DEFAULT_TYPE = "Article"
+# TODO: Update with actual path to client FB page
+META_FB_PUBLISHER = "https://www.facebook.com/"
 
-META_FB_TYPE = "Article"
-
-META_FB_APPID = ""
-
-META_FB_PROFILE_ID = "{{cookiecutter.project_slug}}"
-
-META_FB_PUBLISHER = "https://www.facebook.com/{{cookiecutter.project_slug}}/"
+# TODO: Upate with actual path to client Twitter Page
+META_TWITTER_SITE = "https://twitter.com/"
 
 META_TWITTER_TYPE = "summary"
 
-META_TWITTER_SITE = "https://twitter.com/{{cookiecutter.project_slug}}"
-
-META_GPLUS_TYPE = "Blog"
 
 # Taggit / Taggit Autosuggest
 # =====================================

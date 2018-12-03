@@ -1,11 +1,27 @@
-{% raw %}
 {% extends "web/cms/base.html" %}
 
+{% comment %}
+    CMS Default Template
+    ============================================================================
+    A simple CMS page template with a single "content" placeholder.
+
+{% endcomment %}
+{% load cms_tags page_meta_tags %}
+
+{% block meta %}
+    {% page_meta request.current_page as meta %}
+    {% page_attribute "page_title" as title %}
+
+    {# NOTE: DjangoCMS Page Meta does not use META_USE_TITLE_TAG #}
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>{{ cookiecutter.project_name }}</title>
+    {% endif %}
+
+    {% include 'djangocms_page_meta/meta.html' with meta=meta %}
+{% endblock meta %}
+
 {% block content %}
-
-<div class="container">
-    default.html
-</div>
-
+    {% placeholder "Plugins" %}
 {% endblock %}
-{% endraw %}

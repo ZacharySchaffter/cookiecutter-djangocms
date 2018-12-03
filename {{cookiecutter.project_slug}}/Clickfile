@@ -313,6 +313,7 @@ def heroku_destroy(heroku_slug, heroku_remote):
 @click.option("--use_https_for_assets", prompt=True, default=True)
 @click.option("--secure_ssl_redirect", prompt=True, default=True)
 @click.option("--session_cookie_secure", prompt=True, default=True)
+@click.option("--meta_site_protocol", prompt=True, default="https")
 @click.option("--crsf_cookie_secure", prompt=True, default=True)
 @click.option("--cms_plugin_cache", prompt=True, default=True)
 @click.option("--cms_placeholder_cache", prompt=True, default=True)
