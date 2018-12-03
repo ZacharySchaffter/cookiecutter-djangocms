@@ -1,0 +1,20 @@
+{% comment %}
+    GTM "Head"
+    ============================================================================
+    Inject the first part (1 of 2) of GTM scripts
+
+    Params:
+        - gtm_code                   GTM code (required)
+    See:
+        - https://developers.google.com/tag-manager/quickstart
+ {% endcomment %}
+
+{% if gtm_code %}
+<script>
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{ gtm_code }}');
+</script>
+{% endif %}

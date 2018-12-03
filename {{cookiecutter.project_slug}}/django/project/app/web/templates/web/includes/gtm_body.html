@@ -1,0 +1,16 @@
+{% comment %}
+    GTM "Body"
+    ============================================================================
+    Inject the first part (2 of 2) of GTM scripts
+
+    Params:
+        gtm_code                   GTM code (required)
+
+    See:
+        https://developers.google.com/tag-manager/quickstart
+ {% endcomment %}
+
+{% if gtm_code %}
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_code }}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+{% endif %}

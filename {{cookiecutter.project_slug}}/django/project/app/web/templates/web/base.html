@@ -2,7 +2,8 @@
 {% load staticfiles i18n cms_tags sekizai_tags menu_tags meta %}
 {% get_current_language as LANGUAGE_CODE %}
 <!doctype html>
-<html class="no-js" lang="{{LANGUAGE_CODE}}" {% meta_namespaces %} {% meta_namespaces_gplus %}>
+<html class="" lang="{{LANGUAGE_CODE}}" {% meta_namespaces %} {% meta_namespaces_gplus %}>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,26 +16,15 @@
         <link rel="stylesheet" media="all" href="{% static 'css/styles.css' %}"/>
     {% endaddtoblock %}
 
-    {% block extra_head %}{% endblock extra_head %}
-
     {% render_block "css" %}
 
-    <script>
-        // Create JS namespace
-        window.DJANGO = window.DJANGO || {};
+    {% include "web/includes/django_js.html" %}
+    {% include "web/includes/gtm_head.html" with gtm_code=web_settings.gtm_code %}
 
-        !(function(window, document, exports){
-            /**
-             * Inject settings from template context into a JS namespace
-             */
-
-            exports["staticUrl"] = "{{STATIC_URL}}";
-            exports["mediaUrl"]  = "{{MEDIA_URL}}";
-
-        })(window, document, window.DJANGO)
-    </script>
-
+    {% block extra_head %}{% endblock extra_head %}
+</head>
 <body class="{% block body_class %}{% endblock body_class %}">
+    {% include "web/includes/gtm_body.html" with gtm_code=web_settings.gtm_code %}
     {% cms_toolbar %}
 
     {% block header %}
@@ -50,10 +40,6 @@
 
     {% addtoblock "js" %}
         <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
-    {% endaddtoblock %}
-
-    {% addtoblock "js" %}
-        {% include "web/partials/analytics.html" %}
     {% endaddtoblock %}
 
     {% addtoblock "js" %}

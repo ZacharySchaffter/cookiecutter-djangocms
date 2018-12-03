@@ -1,0 +1,12 @@
+<script>
+window.DJANGO = window.DJANGO || {};
+
+!(function(window, document, exports){
+/**
+ * Inject settings from template context into a JS namespace.
+*/
+exports["staticUrl"] = "{{STATIC_URL}}";
+exports["mediaUrl"]  = "{{MEDIA_URL}}";
+
+})(window, document, window.DJANGO)
+</script>

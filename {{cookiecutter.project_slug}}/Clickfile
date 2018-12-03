@@ -319,6 +319,7 @@ def heroku_destroy(heroku_slug, heroku_remote):
 @click.option("--cms_page_cache", prompt=True, default=True)
 @click.option("--uploadcare_pub_key", prompt=True, default="demopublickey")
 @click.option("--uploadcare_secret_key", prompt=True, default="demoprivatekey")
+@click.option("--gtm_code", prompt=True, default="")
 def heroku_configure(heroku_slug, heroku_remote, *args, **kwargs):
     """Configure HEROKU_SLUG-HEROKU_REMOTE app.
 
