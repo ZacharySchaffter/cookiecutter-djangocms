@@ -45,6 +45,7 @@ var config = {
             { "from": "@copy/taggit_autosuggest/taggit-autosuggest.js", "to": "js/jquery.autoSuggest.minified.js" },
             { "from": "@copy/djangocms/djangocms-admin-overrides.css", "to": "css/djangocms-admin-overrides.css" },
             { "from": "@copy/imgs/", "to": "imgs/" },
+            { "from": "@copy/favicon/", "to": "favicon/" },
         ]),
         // TODO: maybe pass browser sync as a flag/option
         new BrowserSyncPlugin({
@@ -59,7 +60,7 @@ var config = {
                 "../app/ui_kit/templates/ui_kit/**/*.html",
                 "../app/ui_kit/templates/ui_kit/**/*.html"
             ],
-            reloadDelay:300,
+            reloadDelay: 300,
             reloadDebounce: 500
         })
     ],

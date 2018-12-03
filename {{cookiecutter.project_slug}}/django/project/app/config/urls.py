@@ -57,6 +57,7 @@ urlpatterns += [
     },
         name="sitemap"
     ),
+    url(r'^', include("app.favicon.urls", namespace="app_favicon")),
 ]
 
 # -------------------------------------

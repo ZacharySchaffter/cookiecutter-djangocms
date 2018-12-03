@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     {% if cookiecutter.use_uploadcare.lower() == "y" %}"pyuploadcare.dj",{% endif %}
     "app.cms",
     "app.web",
+    "app.favicon",
     "app.ui",
     "app.ui_kit",
 )
@@ -211,6 +212,7 @@ TEMPLATES = [
                 "sekizai.context_processors.sekizai",
                 "cms.context_processors.cms_settings",
                 "app.web.context_processors.web_settings",
+                "app.favicon.context_processors.favicon_settings",
             ),
         },
     }
@@ -450,18 +452,22 @@ REST_FRAMEWORK = {
     )
 }
 
-# -------------------------------------
-# PROJECT SETTINGS
-# -------------------------------------
-
-
-# Analytics
-# =====================================
-
-GTM_CODE = env("GTM_CODE", default="")
 
 # Google
 # =====================================
 
 GOOGLE_API_KEY = env("GOOGLE_API_KEY", default="")
 
+GTM_CODE = env("GTM_CODE", default="")
+
+
+# Favicon
+# =====================================
+
+FAVICON = {
+    "favicon_version": env("FAVICON_VERSION", default=""),
+    "favicon_asset_base_path": "/favicon/",
+    "favicon_assets": [
+        # TODO: Update (see app/favicon/README.md)
+    ]
+}

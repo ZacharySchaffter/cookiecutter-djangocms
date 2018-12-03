@@ -1,0 +1,17 @@
+{% comment %}
+
+    Favicon Head
+    ====================================
+
+    Context:
+        favicon_settings        Injected in settings, TEMPLATES["OPTIONS"]["context_processors"]
+
+    Notes:
+        - This file needs manual updating (see: app/favicon/README.md)
+
+{% endcomment %}
+
+{% with query_string=favicon_settings.favicon_asset_query_string %}
+{# NOTE: Paste output from https://realfavicongenerator.net #}
+
+{% endwith %}
